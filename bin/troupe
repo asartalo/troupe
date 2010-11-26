@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+ini_set('error_reporting', E_ALL | E_STRICT);
+require_once realpath(__DIR__ . '/../src/SplClassLoader.php');
+$path = realpath(__DIR__ . '/../src/');
+$classLoader = new SplClassLoader('Troupe', $path);
+$classLoader->register();
+
+if (!isset($_SESSION)) {
+  $_SESSION = array();
+}
+$scope = new \Troupe\EnvironmentScope(
+  $_ENV, getcwd(), $argv
+);
+\Troupe\Injector::injectEnvironmentHelper($scope)->run();
+?>
+
