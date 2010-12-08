@@ -6,7 +6,7 @@ class EnvironmentHelper {
   
   private $cli, $env, $cwd, $args, $tasklists;
   
-  function __construct(Cli $cli, array $env, $cwd, array $args, array $tasklists) {
+  function __construct(\Troupe\Cli\Controller $cli, array $env, $cwd, array $args, array $tasklists) {
     $this->cli = $cli;
     $this->env = $env;
     $this->cwd = $cwd;

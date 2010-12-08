@@ -1,0 +1,3 @@
+NEXT:
+- Fix problem when a symbolic link is already present in the same local
+  vendor directory

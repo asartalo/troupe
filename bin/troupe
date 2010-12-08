@@ -6,9 +6,6 @@ $path = realpath(__DIR__ . '/../src/');
 $classLoader = new SplClassLoader('Troupe', $path);
 $classLoader->register();
 
-if (!isset($_SESSION)) {
-  $_SESSION = array();
-}
 $scope = new \Troupe\EnvironmentScope(
   $_ENV, getcwd(), $argv
 );

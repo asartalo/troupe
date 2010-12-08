@@ -5,10 +5,6 @@ use \Troupe\Cli\Command;
 
 class Interpreter {
   
-  function __construct() {
-    
-  }
-  
   function interpret(array $args) {
     $result = array();
     $result['caller'] = array_shift($args);
