@@ -15,4 +15,9 @@ abstract class AbstractSource implements Source {
     $this->data_directory = $data_directory;
   }
   
+  function getDataDir() {
+    var_dump(md5($this->url));
+    return $this->data_directory . '/' . md5($this->url);
+  }
+  
 }

@@ -28,8 +28,12 @@ class Dependency {
     return $this->source->import();
   }
   
-  function getStatus() {
-    echo "NOT IMPLEMENTED YET.";
+  function getSource() {
+    return $this->source;
+  }
+  
+  function getDataLocation() {
+    return $this->source->getDataDir();
   }
   
 }

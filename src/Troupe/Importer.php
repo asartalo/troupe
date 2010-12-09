@@ -17,16 +17,29 @@ class Importer {
   
   // TODO: Refactor this.
   function import($project_vendor_dir, Dependency $dependency) {
+    $data_location = $dependency->getDataLocation();
+    $local_location = $dependency->getLocalLocation();
     $status = $dependency->load();
     if ($status->isSuccessful()) {    
-      $lib_location = $status->getAttachment();
-      $dep_local = $dependency->getLocalLocation();
-      if ($lib_location !== $this->utilities->readlink($dep_local)) {
-        $this->utilities->symlink($lib_location, $dep_local);
-      }
+      $this->linkLocations($data_location, $local_location);
     }
     $this->utilities->out($status->getMessage());
     return $status;
+  }
+  
+  private function linkLocations($data_location, $local_location) {
+    if ($this->utilities->fileExists($local_location)) {
+      if ($this->isLinkPointsTo($local_location, $data_location)) {
+        return;
+      } else {
+        $this->utilities->unlink($local_location);
+      }
+    }
+    $this->utilities->symlink($data_location, $local_location);
+  }
+  
+  private function isLinkPointsTo($local_location, $data_location) {
+    return $data_location === $this->utilities->readlink($local_location);
   }
   
 }

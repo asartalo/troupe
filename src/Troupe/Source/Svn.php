@@ -9,7 +9,7 @@ use \Troupe\Status\Failure;
 class Svn extends AbstractSource {
   
   function import() {
-    $troupe_lib_path = $this->data_directory . '/' . md5($this->url);
+    $troupe_lib_path = $this->getDataDir();
     if ($this->system_utilities->fileExists($troupe_lib_path)) {
       return $this->svnUpdate($troupe_lib_path);
     }

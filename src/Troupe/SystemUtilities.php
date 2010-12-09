@@ -34,4 +34,8 @@ class SystemUtilities {
     return include $file;
   }
   
+  function unlink($file) {
+    return unlink($file);
+  }
+  
 }

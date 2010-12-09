@@ -50,4 +50,17 @@ class DependencyTest extends \PHPUnit_Framework_TestCase {
     );
   }
   
+  function testGetDataLocationCallsSourceGetDataDir() {
+    $this->source->expects($this->once())
+      ->method('getDataDir');
+    $this->dependency->getDataLocation();
+  }
+  
+  function testGetDataLocationReturnsValueFromSourceGetDataDir() {
+    $this->source->expects($this->once())
+      ->method('getDataDir')
+      ->will($this->returnValue('foo'));
+    $this->assertEquals('foo', $this->dependency->getDataLocation());
+  }
+  
 }
