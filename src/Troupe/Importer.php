@@ -9,9 +9,10 @@ const FAIL = 11300;
 
 class Importer {
   
-  private $utilities;
+  private $vdm, $utilities;
   
-  function __construct(SystemUtilities $utilities) {
+  function __construct(VendorDirectoryManager $vdm, SystemUtilities $utilities) {
+    $this->vdm = $vdm;
     $this->utilities = $utilities;
   }
   
@@ -20,7 +21,7 @@ class Importer {
     $data_location = $dependency->getDataLocation();
     $local_location = $dependency->getLocalLocation();
     $status = $dependency->load();
-    if ($status->isSuccessful()) {    
+    if ($status->isSuccessful()) {
       $this->linkLocations($data_location, $local_location);
     }
     $this->utilities->out($status->getMessage());
@@ -28,18 +29,7 @@ class Importer {
   }
   
   private function linkLocations($data_location, $local_location) {
-    if ($this->utilities->fileExists($local_location)) {
-      if ($this->isLinkPointsTo($local_location, $data_location)) {
-        return;
-      } else {
-        $this->utilities->unlink($local_location);
-      }
-    }
-    $this->utilities->symlink($data_location, $local_location);
-  }
-  
-  private function isLinkPointsTo($local_location, $data_location) {
-    return $data_location === $this->utilities->readlink($local_location);
+    $this->vdm->link($local_location, $data_location);
   }
   
 }

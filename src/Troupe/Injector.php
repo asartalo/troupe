@@ -77,8 +77,13 @@ class Injector {
   
   public static function injectImporter(EnvironmentScope $scope) {
     return new Importer(
+      self::injectVendorDirectoryManager($scope),
       self::injectSystemUtilities($scope)
     );
+  }
+  
+  public static function injectVendorDirectoryManager(EnvironmentScope $scope) {
+    return new VendorDirectoryManager(self::injectSystemUtilities($scope));
   }
   
   public static function injectSystemUtilities(EnvironmentScope $scope) {

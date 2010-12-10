@@ -11,12 +11,10 @@ class ImporterTest extends \Troupe\Tests\TestCase {
   
   public function setUp() {
     $this->project_dir = 'foo/path';
+    $this->VDM = $this->quickMock('Troupe\VendorDirectoryManager');
     $this->dependency = $this->quickMock('Troupe\Dependency\Dependency');
-    $this->utilities = $this->quickMock(
-      'Troupe\SystemUtilities',
-      array('symlink', 'readlink', 'fileExists', 'out', 'unlink')
-    );
-    $this->importer = new Importer($this->utilities);
+    $this->utilities = $this->quickMock('Troupe\SystemUtilities',array('out'));
+    $this->importer = new Importer($this->VDM, $this->utilities);
     $this->status = $this->quickMock('Troupe\Status\Status');
   }
   
@@ -57,18 +55,18 @@ class ImporterTest extends \Troupe\Tests\TestCase {
     $this->dependencyReturnsDataLocation($dep_path);
     $this->statusIsSuccessful();
     $this->dependencyReturnsLocalLocation($local_path);
-    $this->utilities->expects($this->once())
-      ->method('symlink')
-      ->with($dep_path, $local_path);
+    $this->VDM->expects($this->once())
+      ->method('link')
+      ->with($local_path, $dep_path);
     $this->importer->import($this->project_dir, $this->dependency);
   }
   
-  function testImportSkipsSymlinkWhenStatusSuccessCheckReturnsFalse() {
+  function testImportSkipsLinkWhenStatusSuccessCheckReturnsFalse() {
     $local_path = 'lib/path/my_dependency';
     $this->dependencyReturnsStatus();
     $this->statusIsSuccessful(false);
-    $this->utilities->expects($this->never())
-      ->method('symlink');
+    $this->VDM->expects($this->never())
+      ->method('link');
     $this->importer->import($this->project_dir, $this->dependency);
   }
   
@@ -101,89 +99,6 @@ class ImporterTest extends \Troupe\Tests\TestCase {
     $this->dependencyReturnsStatus();
     $this->dependency->expects($this->once())
       ->method('getDataLocation');
-    $this->importer->import($this->project_dir, $this->dependency);
-  }
-  
-  function testImportChecksIfLocalLocationExists() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->statusIsSuccessful(); // TODO: There should be no need for this...
-    $this->dependencyReturnsLocalLocation($local_path);
-    $this->utilities->expects($this->atLeastOnce())
-      ->method('fileExists')
-      ->with($local_path);
-    $this->importer->import($this->project_dir, $this->dependency);
-  }
-  
-  function testImportSkipsLinkCheckIfLocalLocationOrLinkDoesNotExist() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->statusIsSuccessful(); // TODO: There should be no need for this...
-    $this->dependencyReturnsLocalLocation($local_path);
-    $this->utilities->expects($this->atLeastOnce())
-      ->method('fileExists')
-      ->will($this->returnValue(false));
-    $this->utilities->expects($this->never())
-      ->method('readlink');
-    $this->importer->import($this->project_dir, $this->dependency);
-  }
-  
-  function testImportChecksSymlinkPointsToDependencyPath() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->dependencyReturnsDataLocation($dep_path);
-    $this->statusIsSuccessful();
-    $this->dependencyReturnsLocalLocation($local_path);
-    $this->utilities->expects($this->atLeastOnce())
-      ->method('fileExists')
-      ->will($this->returnValue(true));
-    $this->utilities->expects($this->once())
-      ->method('readlink')
-      ->with($local_path);
-    $this->importer->import($this->project_dir, $this->dependency);
-  }
-  
-  function testImportSkipsSymlinkWhenSymlinkPointsToDependencyPath() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->dependencyReturnsDataLocation($dep_path);
-    $this->statusIsSuccessful();
-    $this->dependencyReturnsLocalLocation($local_path);
-    $this->utilities->expects($this->atLeastOnce())
-      ->method('fileExists')
-      ->will($this->returnValue(true));
-    $this->utilities->expects($this->once())
-      ->method('readlink')
-      ->will($this->returnValue($dep_path));
-    $this->utilities->expects($this->never())
-      ->method('symlink');
-    $this->importer->import($this->project_dir, $this->dependency);
-  }
-  
-  function testImportRemovesIncorrectSymlinkBeforeCorrectingIt() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->dependencyReturnsDataLocation($dep_path);
-    $this->statusIsSuccessful();
-    $this->dependencyReturnsLocalLocation($local_path);
-    $this->utilities->expects($this->atLeastOnce())
-      ->method('fileExists')
-      ->with($local_path)
-      ->will($this->returnValue(true));
-    $this->utilities->expects($this->once())
-      ->method('readlink')
-      ->will($this->returnValue('bar'));
-    $this->utilities->expects($this->once())
-      ->method('unlink')
-      ->with($local_path);
-    $this->utilities->expects($this->once())
-      ->method('symlink')
-      ->with($dep_path, $local_path);
     $this->importer->import($this->project_dir, $this->dependency);
   }
   
