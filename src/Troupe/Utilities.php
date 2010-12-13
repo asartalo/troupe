@@ -21,6 +21,10 @@ class Utilities {
     return str_replace(array(' ', '-'), '', $this->ucwordsLower($string));
   }
   
+  function strStartsWith($needle, $haystack) {
+    return strpos($haystack, $needle) === 0;
+  }
+  
   private function ucwordsLower($string) {
     return ucwords(
       strtolower(str_replace(array('-', '_'), ' ', $string))

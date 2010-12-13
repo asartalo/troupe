@@ -4,6 +4,7 @@ namespace Troupe\Tests\Unit;
 require_once realpath(__DIR__ . '/../../../bootstrap.php');
 
 use \Troupe\Reader;
+use \Troupe\Utilities;
 
 class ReaderTest extends \PHPUnit_Framework_TestCase {
 
@@ -15,39 +16,62 @@ class ReaderTest extends \PHPUnit_Framework_TestCase {
     );
   }
   
-  function testReadChecksIfAssemblyFileExistsInProjectDirectory() {
+  private function fileExistsReturns($bool) {
     $this->system_utilities->expects($this->once())
       ->method('fileExists')
-      ->with('a/directory/mytroupe.php');
-    $this->reader->read();
+      ->will($this->returnValue($bool));
   }
   
-  function testReadIncludesAndReturnsValueOfAssemblyFile() {
-    $foo = array(1, 2, 3);
-    $this->system_utilities->expects($this->once())
-      ->method('fileExists')
-      ->will($this->returnValue(true));
+  private function includesFileWith($file) {
+    return $this->system_utilities->expects($this->once())
+      ->method('fileExists')->with($file);
+  }
+  
+  function testGetDependencyListChecksIfAssemblyFileExistsInProjectDirectory() {
+    $this->includesFileWith('a/directory/mytroupe.php');
+    $this->reader->getDependencyList();
+  }
+  
+  function testGetDependencyListIncludesAndReturnsValueOfAssemblyFile() {
+    $foo = array('foo' => array(), 'bar' => array(), 'baz' => array());
+    $this->fileExistsReturns(true);
     $this->system_utilities->expects($this->once())
       ->method('includeFile')
       ->with('a/directory/mytroupe.php')
       ->will($this->returnValue($foo));
-    $this->assertEquals($foo, $this->reader->read());
+    $this->assertEquals($foo, $this->reader->getDependencyList());
   }
   
-  function testReadReturnsEmptyArrayWhenAssemblyFileIsNotFound() {
+  function testGetDependencyListSkipsSettings() {
+    $foo = array('foo' => array(), '_settings' => array(), 'baz' => array());
+    $this->fileExistsReturns(true);
     $this->system_utilities->expects($this->once())
-      ->method('fileExists')
-      ->will($this->returnValue(false));
-    $this->assertEquals(array(), $this->reader->read());
+      ->method('includeFile')
+      ->will($this->returnValue($foo));
+    $foo_0 = $foo;
+    unset($foo_0['_settings']);
+    $this->assertEquals($foo_0, $this->reader->getDependencyList());
   }
   
-  function testReadSkipsIncludesIfAssemblyFileIsNotFound() {
+  function testGetSettings() {
+    $foo = array('foo' => array(), '_settings' => array('bar' => 2));
+    $this->fileExistsReturns(true);
     $this->system_utilities->expects($this->once())
-      ->method('fileExists')
-      ->will($this->returnValue(false));
+      ->method('includeFile')
+      ->will($this->returnValue($foo));
+    $this->assertEquals($foo['_settings'], $this->reader->getSettings());
+  }
+  
+  function testGetDependencyListReturnsEmptyArrayWhenAssemblyFileIsNotFound() {
+    $this->fileExistsReturns(false);
+    $this->assertEquals(array(), $this->reader->getDependencyList());
+  }
+  
+  function testGetDependencyListSkipsIncludesIfAssemblyFileIsNotFound() {
+    $this->fileExistsReturns(false);
     $this->system_utilities->expects($this->never())
       ->method('includeFile');
-    $this->reader->read();
+    $this->reader->getDependencyList();
   }
   
 }

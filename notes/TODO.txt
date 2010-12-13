@@ -1,4 +1,2 @@
 NEXT:
-- Fix problem when a symbolic link is already present in the same local
-  vendor directory but 
 - Attempt to create vendor directory when it is not present yet

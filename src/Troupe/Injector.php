@@ -57,9 +57,7 @@ class Injector {
   }
   
   public static function injectTroupeList(EnvironmentScope $scope) {
-    return self::injectReader($scope)->read(
-      self::injectProjectRootDirectory($scope)
-    );
+    return self::injectReader($scope)->getDependencyList();
   }
   
   public static function injectReader(EnvironmentScope $scope) {
