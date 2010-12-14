@@ -24,7 +24,7 @@ class Reader {
   
   function getSettings() {
     $list = $this->getAllTroupeList();
-    return $list['_settings'];
+    return isset($list['_settings']) ? $list['_settings'] : array();
   }
   
   private function getAllTroupeList() {

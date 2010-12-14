@@ -7,6 +7,7 @@ use \Troupe\Source\Source;
 use \Troupe\Source\Factory as SourceFactory;
 use \Troupe\Dependency\Factory;
 use \Troupe\Dependency\Dependency;
+use \Troupe\Settings;
 
 class FactoryTest extends \Troupe\Tests\TestCase {
 
@@ -15,17 +16,22 @@ class FactoryTest extends \Troupe\Tests\TestCase {
     $this->source = $this->quickMock('Troupe\Source\Source');
     $this->source_factory = $this->quickMock('Troupe\Source\Factory', array('get'));
     $this->project_dir = 'a/path';
+    $this->settings = $this->quickMock('Troupe\Settings');
     $this->dependency_factory = new Factory(
-      $this->source_factory, $this->project_dir
+      $this->source_factory, $this->project_dir, $this->settings
     );
   }
   
-  function testGetDependencyUsesSourceFromSourceFactoryAndReturnsDependency() {
+  function testGetDependencyUsesSettingsSourceFromSourceFactoryAndReturnsDependency() {
     $troupe_list = array(
       'foo' => array(
         'type' => 'svn', 'url'  => 'http://svn.foo.com/repository'
       )
     );
+    $this->settings->expects($this->once())
+      ->method('get')
+      ->with('vendor_dir')
+      ->will($this->returnValue('vendor'));
     $this->source_factory->expects($this->once())
       ->method('get')
       ->with($troupe_list['foo']['url'], $troupe_list['foo']['type'])

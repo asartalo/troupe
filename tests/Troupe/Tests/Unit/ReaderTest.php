@@ -62,6 +62,15 @@ class ReaderTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($foo['_settings'], $this->reader->getSettings());
   }
   
+  function testGetSettingsReturnsEmptyArrayWhenSettingsIsNotFound() {
+    $foo = array('foo' => array());
+    $this->fileExistsReturns(true);
+    $this->system_utilities->expects($this->once())
+      ->method('includeFile')
+      ->will($this->returnValue($foo));
+    $this->assertEquals(array(), $this->reader->getSettings());
+  }
+  
   function testGetDependencyListReturnsEmptyArrayWhenAssemblyFileIsNotFound() {
     $this->fileExistsReturns(false);
     $this->assertEquals(array(), $this->reader->getDependencyList());

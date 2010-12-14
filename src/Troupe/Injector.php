@@ -2,6 +2,7 @@
 
 namespace Troupe;
 
+// TODO: Store object caches in Scope object not in Injector
 class Injector {
   
   private static
@@ -52,12 +53,23 @@ class Injector {
   public static function injectDependencyFactory(EnvironmentScope $scope) {
     return new Dependency\Factory(
       self::injectSourceFactory($scope),
-      self::injectProjectRootDirectory($scope)
+      self::injectProjectRootDirectory($scope),
+      self::injectSettings($scope)
     );
   }
   
   public static function injectTroupeList(EnvironmentScope $scope) {
     return self::injectReader($scope)->getDependencyList();
+  }
+
+  public static function injectSettings(EnvironmentScope $scope) {
+    return new Settings(
+      self::injectRawSettingsData($scope)
+    );
+  }
+  
+  public static function injectRawSettingsData(EnvironmentScope $scope) {
+    return self::injectReader($scope)->getSettings();
   }
   
   public static function injectReader(EnvironmentScope $scope) {
