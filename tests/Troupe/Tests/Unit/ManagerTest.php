@@ -14,12 +14,13 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->dependencies = array(
       $this->dependency1, $this->dependency2
     );
-    $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
-    $this->importer = $this->quickMock('Troupe\Importer', array('import'));
     $this->projectRootDir = 'a/foo/path';
+    $this->importer = $this->quickMock('Troupe\Importer', array('import'));
+    $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
+    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('getVendorDir'));
     $this->manager = new Manager(
       $this->projectRootDir, $this->dependencies, $this->importer,
-      $this->system_utilities
+      $this->system_utilities, $this->vdm
     );
   }
   
@@ -29,13 +30,22 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     );
   }
   
+  function testManageDependenciesAsksVdmForVendorDirectory() {
+    $this->vdm->expects($this->exactly(2))
+      ->method('getVendorDir');
+    $this->manager->manageDependencies();
+  }
+  
   function testManageDependenciesPassesDependenciesToImporter() {
+    $this->vdm->expects($this->any())
+      ->method('getVendorDir')
+      ->will($this->returnValue('foo/bar'));
     $this->importer->expects($this->at(0))
       ->method('import')
-      ->with($this->projectRootDir . '/vendor', $this->dependency1);
+      ->with('foo/bar', $this->dependency1);
     $this->importer->expects($this->at(1))
       ->method('import')
-      ->with($this->projectRootDir . '/vendor', $this->dependency2);
+      ->with('foo/bar', $this->dependency2);
     $this->manager->manageDependencies();
   }
   

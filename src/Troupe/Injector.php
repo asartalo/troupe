@@ -37,7 +37,8 @@ class Injector {
       self::injectProjectRootDirectory($scope),
       self::injectDependencies($scope),
       self::injectImporter($scope),
-      self::injectSystemUtilities($scope)
+      self::injectSystemUtilities($scope),
+      self::injectVendorDirectoryManager($scope)
     );
   }
   
@@ -93,7 +94,10 @@ class Injector {
   }
   
   public static function injectVendorDirectoryManager(EnvironmentScope $scope) {
-    return new VendorDirectoryManager(self::injectSystemUtilities($scope));
+    return new VendorDirectoryManager(
+      self::injectSystemUtilities($scope),
+      self::injectSettings($scope)
+    );
   }
   
   public static function injectSystemUtilities(EnvironmentScope $scope) {

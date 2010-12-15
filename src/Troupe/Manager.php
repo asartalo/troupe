@@ -4,6 +4,7 @@ namespace Troupe;
 
 use \Troupe\Importer;
 use \Troupe\SystemUtilities;
+use \Troupe\VendorDirectoryManager as VDM;
 
 class Manager {
   
@@ -11,12 +12,13 @@ class Manager {
   
   function __construct(
     $project_root_dir, array $dependencies, Importer $importer,
-    SystemUtilities $system_utilities
+    SystemUtilities $system_utilities, VDM $vdm
   ) {
     $this->project_root_dir = $project_root_dir;
     $this->dependencies = $dependencies;
     $this->importer = $importer;
     $this->system_utilities = $system_utilities;
+    $this->vdm = $vdm;
   }
   
   function getDependencies() {
@@ -28,7 +30,7 @@ class Manager {
       $this->system_utilities->out(
         "\n==========\nImporting: {$dependency->getName()}"
       );
-      $this->importer->import($this->project_root_dir . '/vendor', $dependency);
+      $this->importer->import($this->vdm->getVendorDir(), $dependency);
     }
   }
   

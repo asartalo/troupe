@@ -38,4 +38,18 @@ class SystemUtilities {
     return unlink($file);
   }
   
+  function umask($mode = null) {
+    if ($mode) {
+      return umask($mode);
+    }
+    return umask();
+  }
+  
+  function mkdir($pathname, $mode = 0777, $recursive = false, $context = null) {
+    if ($context) {
+      return mkdir($pathname, $mode, $recursive, $context);
+    }
+    return mkdir($pathname, $mode, $recursive);
+  }
+  
 }

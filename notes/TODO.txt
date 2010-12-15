@@ -1,3 +1,2 @@
 NEXT:
-- Attempt to create vendor directory when it is not present yet
-- Store object caches in Scope object not in Injector
+- Import from Git Source
