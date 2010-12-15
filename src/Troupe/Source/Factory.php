@@ -10,7 +10,8 @@ class Factory {
     $system_utilities, 
     $data_directory, 
     $types = array(
-      'svn' => 'Svn'
+      'svn' => 'Svn',
+      'git' => 'Git',
     );
   
   function __construct(SystemUtilities $system_utilities, $data_directory = '') {

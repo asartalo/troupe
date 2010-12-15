@@ -27,4 +27,9 @@ class FactoryTest extends \PHPUnit_Framework_TestCase {
     $this->assertType('Troupe\Source\Unknown', $source);
   }
   
+  function testGetGitSource() {
+    $source = $this->source_factory->get('git://example/foo.git/', 'git');
+    $this->assertType('Troupe\Source\Git', $source);
+  }
+  
 }

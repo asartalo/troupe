@@ -25,7 +25,7 @@ Dependency information is stored in mytroupe.php
       'symfony' => array(
         'url'     => 'git://github.com/symfony/symfony.git',
         'alias'   => 'symfony2', // This will be the directory name the source will be renamed to. Defaults to label/name
-        'move_to' => 'lib/src', // Defaults to 'vendor in settings'
+        'move_to' => 'lib/src', // Defaults to 'vendor_dir' in settings
       ),
       'doctrine' => 'git://github.com/doctrine/doctrine2.git',
       'phpunit' => array(
@@ -42,6 +42,7 @@ Dependency information is stored in mytroupe.php
         'php_version' => '5.3.x'
       ),
       
+      // This is for the project settings
       '_settings' => array(
         'vendor_dir' => 'lib/src', // Default is 'vendor',
         

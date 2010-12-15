@@ -5,7 +5,6 @@ namespace Troupe;
 class SystemUtilities {
   
   function symlink($target, $link) {
-    echo "target: $target \n link: $link\n";
     symlink($target, $link);
   }
   
@@ -19,6 +18,7 @@ class SystemUtilities {
   }
   
   function system($command) {
+    echo $command. "\n";
     return system($command);
   }
   
