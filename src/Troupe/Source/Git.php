@@ -10,7 +10,14 @@ class Git extends AbstractSource {
   
   function import() {
     $troupe_lib_path = $this->getDataDir();
-    return $this->gitCheckOut($troupe_lib_path);
+    if (!$this->vdm->isDataImported($this->url)) {
+      return $this->gitCheckOut($troupe_lib_path);
+    }
+    return new Success(
+      \Troupe\Source\STATUS_OK, 
+      "SUCCESS: {$this->url} has already been imported.",
+      $troupe_lib_path
+    );
   }
   
   private function gitCheckOut($troupe_lib_path) {
@@ -19,6 +26,7 @@ class Git extends AbstractSource {
       escapeshellarg($troupe_lib_path)
     ));
     if (strpos($output, 'Initialized empty Git repository in') === 0) {
+      $this->vdm->importSuccess($this->url);
       return new Success(
         \Troupe\Source\STATUS_OK, 
         "SUCCESS: Imported {$this->url}.",

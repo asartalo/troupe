@@ -8,37 +8,86 @@ use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 
 
-class GitTest extends \PHPUnit_Framework_TestCase {
+class GitTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->utilities  = $this->getMock('Troupe\SystemUtilities');
     $this->url = 'http://git.source.com/example';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->git_source = new Git($this->url, $this->utilities, $this->data_dir);
+    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('isDataImported', 'importSuccess'));
+    $this->git_source = new Git($this->url, $this->vdm, $this->utilities, $this->data_dir);
+  }
+  
+  function testImportChecksWithVdmIfDataHasAlreadyBeenImported() {
+    $this->vdm->expects($this->once())
+      ->method('isDataImported')
+      ->with($this->url);
+    $this->git_source->import();
+  }
+  
+  private function vdmIsDataImported($bool) {
+    return $this->vdm->expects($this->once())
+      ->method('isDataImported')
+      ->will($this->returnValue($bool));
   }
 
   function testImport() {
     $folder_name = md5($this->url);
+    $this->vdmIsDataImported(false);
     $this->utilities->expects($this->once())
       ->method('system')
       ->with("git clone '{$this->url}' '{$this->data_dir}/$folder_name'");
     $this->git_source->import();
   }
   
+  function testImportSkipsCheckoutIfDataHasAlreadyBeenImported() {
+    $folder_name = md5($this->url);
+    $this->vdmIsDataImported(true);
+    $this->utilities->expects($this->never())
+      ->method('system');
+    $this->git_source->import();
+  }
+  
   function testImportReturnsOkayStatusMessageIfSuccessful() {
     $folder_name = md5($this->url);
+    $this->vdmIsDataImported(false);
     $status = new Success(
       \Troupe\Source\STATUS_OK, "SUCCESS: Imported {$this->url}.",
       "{$this->data_dir}/$folder_name"
     );
+    $this->checkoutIsSuccessful();
+    $this->assertEquals($status, $this->git_source->import());
+  }
+  
+  function checkOutIsSuccessful() {
     $this->utilities->expects($this->once())
       ->method('system')
       ->will($this->returnValue('Initialized empty Git repository in foo/bar.'));
+  }
+  
+  function testImportTellsVdmThatTheDataHasBeenImportedSuccessfuly() {
+    $folder_name = md5($this->url);
+    $this->vdmIsDataImported(false);
+    $this->checkoutIsSuccessful();
+    $this->vdm->expects($this->once())
+      ->method('importSuccess')
+      ->with($this->url);
+    $this->git_source->import();
+  }
+  
+  function testImportReturnsOkayStatusMessageIfVdmSaysDataHasAlreadyBeenImported() {
+    $folder_name = md5($this->url);
+    $this->vdmIsDataImported(true);
+    $status = new Success(
+      \Troupe\Source\STATUS_OK, "SUCCESS: {$this->url} has already been imported.",
+      "{$this->data_dir}/$folder_name"
+    );
     $this->assertEquals($status, $this->git_source->import());
   }
   
   function testImportReturnsFailStatusMessageIfNotSuccessful() {
     $folder_name = md5($this->url);
+    $this->vdmIsDataImported(false);
     $status = new Failure(
       \Troupe\Source\STATUS_FAIL, "FAIL: Unable to import {$this->url}."
     );
@@ -46,6 +95,17 @@ class GitTest extends \PHPUnit_Framework_TestCase {
       ->method('system')
       ->will($this->returnValue('Foo.'));
     $this->assertEquals($status, $this->git_source->import());
+  }
+  
+  function testImportSkipsImportSuccessIfNotSuccessful() {
+    $folder_name = md5($this->url);
+    $this->vdmIsDataImported(false);
+    $this->utilities->expects($this->once())
+      ->method('system')
+      ->will($this->returnValue('Foo.'));
+    $this->vdm->expects($this->never())
+      ->method('importSuccess');
+    $this->git_source->import();
   }
 
 }

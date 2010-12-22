@@ -5,13 +5,14 @@ require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
 use \Troupe\Source\Factory;
 
-class FactoryTest extends \PHPUnit_Framework_TestCase {
+class FactoryTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->system_utilities = $this->getMock('Troupe\SystemUtilities');
     $this->data_directory = 'a/directory';
+    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager');
     $this->source_factory = new Factory(
-      $this->system_utilities, $this->data_directory
+      $this->system_utilities, $this->vdm, $this->data_directory
     );
   }
   

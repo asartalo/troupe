@@ -8,13 +8,14 @@ use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 
 
-class SvnTest extends \PHPUnit_Framework_TestCase {
+class SvnTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->utilities  = $this->getMock('Troupe\SystemUtilities');
     $this->url = 'http://svn.source.com/example';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->svn_source = new Svn($this->url, $this->utilities, $this->data_dir);
+    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager');
+    $this->svn_source = new Svn($this->url, $this->vdm, $this->utilities, $this->data_dir);
   }
 
   function testImport() {

@@ -18,6 +18,7 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->importer = $this->quickMock('Troupe\Importer', array('import'));
     $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
     $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('getVendorDir'));
+    $this->logger = $this->quickMock('Troupe\Logger', array('log'));
     $this->manager = new Manager(
       $this->projectRootDir, $this->dependencies, $this->importer,
       $this->system_utilities, $this->vdm
@@ -63,6 +64,14 @@ class ManagerTest extends \Troupe\Tests\TestCase {
       ->method('out')
       ->with("\n==========\nImporting: Bar");
     $this->manager->manageDependencies();
+  }
+  
+  function testManageDependenciesPassesImportStatusToLogger() {
+    $this->markTestIncomplete();
+    $status = $this->quickMock('Troupe\Status\Status');
+    $this->importer->expects($this->any())
+      ->method('import')
+      ->will($this->returnValue($status));
   }
   
 }
