@@ -21,7 +21,7 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->logger = $this->quickMock('Troupe\Logger', array('log'));
     $this->manager = new Manager(
       $this->projectRootDir, $this->dependencies, $this->importer,
-      $this->system_utilities, $this->vdm
+      $this->system_utilities, $this->vdm, $this->logger
     );
   }
   
@@ -67,11 +67,14 @@ class ManagerTest extends \Troupe\Tests\TestCase {
   }
   
   function testManageDependenciesPassesImportStatusToLogger() {
-    $this->markTestIncomplete();
     $status = $this->quickMock('Troupe\Status\Status');
     $this->importer->expects($this->any())
       ->method('import')
       ->will($this->returnValue($status));
+    $this->logger->expects($this->exactly(2))
+      ->method('log')
+      ->with('import_results', $status);
+    $this->manager->manageDependencies();
   }
   
 }
