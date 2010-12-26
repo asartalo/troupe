@@ -37,8 +37,8 @@ class FactoryTest extends \Troupe\Tests\TestCase {
       ->with($troupe_list['foo']['url'], $troupe_list['foo']['type'])
       ->will($this->returnValue($this->source));
     $dependencies = $this->dependency_factory->getDependencies($troupe_list);
-    $this->assertType('array', $dependencies);
-    $this->assertType('Troupe\Dependency\Dependency', $dependencies[0]);
+    $this->assertInternalType('array', $dependencies);
+    $this->assertInstanceOf('Troupe\Dependency\Dependency', $dependencies[0]);
     $this->assertEquals(
       new Dependency('foo', $this->source, $this->project_dir . '/vendor' ), $dependencies[0]
     );

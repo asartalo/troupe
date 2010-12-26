@@ -18,19 +18,19 @@ class FactoryTest extends \Troupe\Tests\TestCase {
   
   function testGetSvnSource() {
     $source = $this->source_factory->get('http://example/svn/repo', 'svn');
-    $this->assertType('Troupe\Source\Svn', $source);
+    $this->assertInstanceOf('Troupe\Source\Svn', $source);
   }
   
   function testGetUnknownSource() {
     $source = $this->source_factory->get('http://example/uri', 'unknown_type');
-    $this->assertType('Troupe\Source\Unknown', $source);
+    $this->assertInstanceOf('Troupe\Source\Unknown', $source);
     $source = $this->source_factory->get('http://example2/uri', 'boooo');
-    $this->assertType('Troupe\Source\Unknown', $source);
+    $this->assertInstanceOf('Troupe\Source\Unknown', $source);
   }
   
   function testGetGitSource() {
     $source = $this->source_factory->get('git://example/foo.git/', 'git');
-    $this->assertType('Troupe\Source\Git', $source);
+    $this->assertInstanceOf('Troupe\Source\Git', $source);
   }
   
 }
