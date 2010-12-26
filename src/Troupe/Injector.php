@@ -82,7 +82,8 @@ class Injector {
   
   public static function injectSourceFactory(EnvironmentScope $scope) {
     return new Source\Factory(
-      self::injectSystemUtilities($scope)
+      self::injectSystemUtilities($scope),
+      self::injectVendorDirectoryManager($scope)
     );
   }
   
@@ -96,8 +97,13 @@ class Injector {
   public static function injectVendorDirectoryManager(EnvironmentScope $scope) {
     return new VendorDirectoryManager(
       self::injectSystemUtilities($scope),
+      self::injectDataStore($scope),
       self::injectSettings($scope)
     );
+  }
+  
+  public static function injectDataStore(EnvironmentScope $scope) {
+    return new DataStore($scope->getDataDirectory());
   }
   
   public static function injectSystemUtilities(EnvironmentScope $scope) {

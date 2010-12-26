@@ -6,8 +6,9 @@ $path = realpath(__DIR__ . '/../src/');
 $classLoader = new SplClassLoader('Troupe', $path);
 $classLoader->register();
 
+$data_dir = realpath(__DIR__ . '/../data');
 $scope = new \Troupe\EnvironmentScope(
-  $_ENV, getcwd(), $argv
+  $_ENV, getcwd(), $data_dir, $argv
 );
 \Troupe\Injector::injectEnvironmentHelper($scope)->run();
 ?>

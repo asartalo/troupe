@@ -4,12 +4,13 @@ namespace Troupe;
 
 class EnvironmentScope {
   
-  private $env, $cwd, $args;
+  private $env, $cwd, $data_dir, $args;
   
-  function __construct(array $env, $cwd, array $args) {
+  function __construct(array $env, $cwd, $data_dir, array $args) {
     $this->env = $env;
     $this->cwd = $cwd;
     $this->args = $args;
+    $this->data_dir = $data_dir;
   }
   
   function getSystemEnvVariables() {
@@ -22,6 +23,10 @@ class EnvironmentScope {
   
   function getArgs() {
     return $this->args;
+  }
+  
+  function getDataDirectory() {
+    return $this->data_dir;
   }
   
 }

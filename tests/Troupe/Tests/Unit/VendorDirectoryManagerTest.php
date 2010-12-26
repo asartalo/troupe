@@ -18,7 +18,8 @@ class VendorDirectoryManagerTest extends \Troupe\Tests\TestCase {
     $this->project_link = 'a/link/path';
     $this->source_path = 'the/original/vendor/path';
     $this->settings = new Settings(array('vendor_dir' => 'foo/bar/vendor'));
-    $this->VDM = new VendorDirectoryManager($this->utilities, $this->settings);
+    $this->data_store = $this->quickMock('Troupe\DataStore', array('set', 'get'));
+    $this->VDM = new VendorDirectoryManager($this->utilities, $this->data_store, $this->settings);
   }
   
   private function fileExistsCalled($times = null) {
@@ -116,6 +117,49 @@ class VendorDirectoryManagerTest extends \Troupe\Tests\TestCase {
     $this->utilities->expects($this->never())
       ->method('mkdir');
     $this->assertEquals('foo/bar/vendor', $this->VDM->getVendorDir());
+  }
+  
+  function testImportSuccess() {
+    $url = 'http://sample.library.url/';
+    $this->data_store->expects($this->once())
+      ->method('set')
+      ->with('data_import', $url, true);
+    $this->VDM->importSuccess($url);
+  }
+  
+  function testIsDataImportedGetsValueFromDataStore() {
+    $url = 'http://sample.library.url/';
+    $this->data_store->expects($this->once())
+      ->method('get')
+      ->with('data_import', $url);
+    $this->VDM->isDataImported($url);
+  }
+  
+  function testIsDataImportedReturnsValueFromDataStore() {
+    $url = 'http://sample.library.url/';
+    $this->data_store->expects($this->once())
+      ->method('get')
+      ->with('data_import', $url)
+      ->will($this->returnValue(true));
+    $this->assertTrue($this->VDM->isDataImported($url));
+  }
+  
+  function testIsDataImportedReturnsValueFromDataStore2() {
+    $url = 'http://sample.library.url/';
+    $this->data_store->expects($this->once())
+      ->method('get')
+      ->with('data_import', $url)
+      ->will($this->returnValue(false));
+    $this->assertFalse($this->VDM->isDataImported($url));
+  }
+  
+  function testIsDataImportedReturnsFalseIfDataStoreReturnsNull() {
+    $url = 'http://sample.library.url/';
+    $this->data_store->expects($this->once())
+      ->method('get')
+      ->with('data_import', $url)
+      ->will($this->returnValue(null));
+    $this->assertFalse($this->VDM->isDataImported($url));
   }
   
 }

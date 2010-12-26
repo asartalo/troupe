@@ -3,13 +3,16 @@
 namespace Troupe;
 
 use \Troupe\Settings;
+use \Troupe\SystemUtilities;
+use \Troupe\DataStore;
 
 class VendorDirectoryManager {
   
-  private $utilities, $settings;
+  private $utilities, $data_store, $settings;
   
-  function __construct(SystemUtilities $utilities, Settings $settings) {
+  function __construct(SystemUtilities $utilities, DataStore $data_store, Settings $settings) {
     $this->utilities = $utilities;
+    $this->data_store = $data_store;
     $this->settings = $settings;
   }
   
@@ -39,6 +42,14 @@ class VendorDirectoryManager {
       $this->utilities->mkdir($vendor_dir, 0755, true);
     }
     return $vendor_dir;
+  }
+  
+  function importSuccess($url) {
+    $this->data_store->set('data_import', $url, true);
+  }
+  
+  function isDataImported($url) {
+    return (bool) $this->data_store->get('data_import', $url);
   }
   
 }
