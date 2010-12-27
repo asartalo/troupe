@@ -44,4 +44,18 @@ class FactoryTest extends \Troupe\Tests\TestCase {
     );
   }
 
+  function testGetDependencyPassesEmptyStringForUnsetKeys() {
+      $troupe_list = array(
+        'foo' => array()
+      );
+      $this->settings->expects($this->once())
+        ->method('get')
+        ->with('vendor_dir')
+        ->will($this->returnValue('vendor'));
+      $this->source_factory->expects($this->once())
+        ->method('get')
+        ->with('', '')
+        ->will($this->returnValue($this->source));
+      $this->dependency_factory->getDependencies($troupe_list);
+    }
 }

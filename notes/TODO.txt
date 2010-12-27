@@ -1,3 +1,2 @@
 NEXT:
-- Store data for successful imports (serialized array or SQLite?)
-- Do not attempt to import when an import has been successful already
+- NONE yet...

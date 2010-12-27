@@ -2,12 +2,7 @@
 
 namespace Troupe;
 
-// TODO: Store object caches in Scope object not in Injector
 class Injector {
-  
-  private static
-    $system_utilities,
-    $utilities;
 
   public static function injectEnvironmentHelper(EnvironmentScope $scope) {
     return new EnvironmentHelper(
@@ -38,8 +33,13 @@ class Injector {
       self::injectDependencies($scope),
       self::injectImporter($scope),
       self::injectSystemUtilities($scope),
-      self::injectVendorDirectoryManager($scope)
+      self::injectVendorDirectoryManager($scope),
+      self::injectLogger($scope)
     );
+  }
+  
+  public static function injectLogger(EnvironmentScope $scope) {
+    return new Logger();
   }
   
   public static function injectProjectRootDirectory(EnvironmentScope $scope) {
@@ -103,21 +103,24 @@ class Injector {
   }
   
   public static function injectDataStore(EnvironmentScope $scope) {
-    return new DataStore($scope->getDataDirectory());
+    if (!$scope->isInCache('DataStore')) {
+      $scope->addToCache('DataStore', new DataStore($scope->getDataDirectory()));
+    }
+    return $scope->getCache('DataStore');
   }
   
   public static function injectSystemUtilities(EnvironmentScope $scope) {
-    if (!self::$system_utilities) {
-      self::$system_utilities = new SystemUtilities;
+    if (!$scope->isInCache('SystemUtilities')) {
+      $scope->addToCache('SystemUtilities', new SystemUtilities);
     }
-    return self::$system_utilities;
+    return $scope->getCache('SystemUtilities');
   }
   
   public static function injectUtilities(EnvironmentScope $scope) {
-    if (!self::$utilities) {
-      self::$utilities = new Utilities;
+    if (!$scope->isInCache('Utilities')) {
+      $scope->addToCache('Utilities', new Utilities);
     }
-    return self::$utilities;
+    return $scope->getCache('Utilities');
   }
   
   public static function injectCliController(EnvironmentScope $scope) {

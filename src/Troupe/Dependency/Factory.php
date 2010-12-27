@@ -18,13 +18,19 @@ class Factory {
   function getDependencies(array $troupe_list) {
     $dependencies = array();
     foreach ($troupe_list as $name => $options) {
-      $source = $this->source_factory->get($options['url'], $options['type']);
+      $url = isset($options['url']) ? $options['url'] : '';
+      $type = isset($options['type']) ? $options['type'] : '';
+      $source = $this->source_factory->get($url, $type);
       $dependencies[] = new Dependency($name, $source,
-        $this->project_dir . DIRECTORY_SEPARATOR . 
-        $this->settings->get('vendor_dir')
+        $this->getFullVendorDir()
       );
     }
     return $dependencies;
+  }
+  
+  private function getFullVendorDir() {
+    return $this->project_dir . DIRECTORY_SEPARATOR . 
+      $this->settings->get('vendor_dir');
   }
   
 }
