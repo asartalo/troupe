@@ -141,4 +141,8 @@ class Injector {
     );
   }
   
+  public static function injectFileWriter(EnvironmentScope $scope) {
+    return new FileWriter;
+  }
+  
 }

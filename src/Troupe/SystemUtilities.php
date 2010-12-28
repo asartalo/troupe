@@ -4,38 +4,56 @@ namespace Troupe;
 
 class SystemUtilities {
   
-  function symlink($target, $link) {
-    symlink($target, $link);
-  }
-  
-  function readlink($link) {
-    return readlink($link);
-  }
-  
   function execute($command) {
     exec($command, $output);
     return $output;
   }
   
-  function system($command) {
-    echo $command. "\n";
-    return system($command);
+  function fclose($handle) {
+    return fclose($handle);
   }
   
   function fileExists($file) {
     return file_exists($file);
   }
   
-  function out($string) {
-    echo $string, "\n";
+  function fopen($filename, $mode) {
+    return fopen($filename, $mode);
+  }
+  
+  function fwrite($handle, $string, $length = null) {
+    if (is_null($length)) {
+      return fwrite($handle, $string);
+    }
+    return fwrite($handle, $string, $length);
   }
   
   function includeFile($file) {
     return include $file;
   }
   
-  function unlink($file) {
-    return unlink($file);
+  function mkdir($pathname, $mode = 0777, $recursive = false, $context = null) {
+    if ($context) {
+      return mkdir($pathname, $mode, $recursive, $context);
+    }
+    return mkdir($pathname, $mode, $recursive);
+  }
+  
+  function out($string) {
+    echo $string, "\n";
+  }
+  
+  function readlink($link) {
+    return readlink($link);
+  }
+  
+  function symlink($target, $link) {
+    symlink($target, $link);
+  }
+  
+  function system($command) {
+    echo $command. "\n";
+    return system($command);
   }
   
   function umask($mode = null) {
@@ -45,11 +63,8 @@ class SystemUtilities {
     return umask();
   }
   
-  function mkdir($pathname, $mode = 0777, $recursive = false, $context = null) {
-    if ($context) {
-      return mkdir($pathname, $mode, $recursive, $context);
-    }
-    return mkdir($pathname, $mode, $recursive);
+  function unlink($file) {
+    return unlink($file);
   }
   
 }
