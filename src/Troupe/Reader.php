@@ -2,6 +2,8 @@
 
 namespace Troupe;
 
+use \Troupe\File\File;
+
 class Reader {
   
   private
@@ -10,10 +12,9 @@ class Reader {
     $assembly_file,
     $list_cache;
   
-  function __construct($project_dir, SystemUtilities $system_utilities) {
-    $this->project_dir = $project_dir;
+  function __construct(File $assembly_file, SystemUtilities $system_utilities) {
     $this->system_utilities = $system_utilities;
-    $this->assembly_file = $this->project_dir . '/' . 'mytroupe.php';
+    $this->assembly_file = $assembly_file;
   }
   
   function getDependencyList() {
@@ -30,8 +31,8 @@ class Reader {
   private function getAllTroupeList() {
     if (!$this->list_cache) {
       $sys = $this->system_utilities;
-      $this->list_cache = $sys->fileExists($this->assembly_file) ?
-        $sys->includeFile($this->assembly_file) : array();
+      $this->list_cache = $this->assembly_file->isFileExists() ?
+        $sys->includeFile($this->assembly_file->getPath()) : array();
     }
     return $this->list_cache;
   }

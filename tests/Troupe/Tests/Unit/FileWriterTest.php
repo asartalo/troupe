@@ -10,7 +10,7 @@ class FileWriterTest extends \Troupe\Tests\TestCase {
   function setUp() {
     $this->fwriter = new FileWriter;
     $this->test_copy_file = __DIR__ . '/../../../bootstrap.php';
-    $this->the_test_file = $this->getTestDataDirectory() . '/test';
+    $this->the_test_file = $this->getTestDataDir() . '/test';
   }
   
   // TODO: Please improve this fragile test

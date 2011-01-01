@@ -6,19 +6,23 @@ require_once realpath(__DIR__ . '/../../../bootstrap.php');
 use \Troupe\Reader;
 use \Troupe\Utilities;
 
-class ReaderTest extends \PHPUnit_Framework_TestCase {
+class ReaderTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
-    $this->system_utilities = $this->getMock('Troupe\SystemUtilities');
+    $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
     $this->project_directory = 'a/directory';
+    $this->file = $this->quickMock('Troupe\File\Php');
+    $this->file->expects($this->any())
+      ->method('getPath')
+      ->will($this->returnValue('a/directory/mytroupe.php'));
     $this->reader = new Reader(
-      $this->project_directory, $this->system_utilities
+      $this->file, $this->system_utilities
     );
   }
   
   private function fileExistsReturns($bool) {
-    $this->system_utilities->expects($this->once())
-      ->method('fileExists')
+    $this->file->expects($this->once())
+      ->method('isFileExists')
       ->will($this->returnValue($bool));
   }
   
@@ -28,7 +32,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase {
   }
   
   function testGetDependencyListChecksIfAssemblyFileExistsInProjectDirectory() {
-    $this->includesFileWith('a/directory/mytroupe.php');
+    $this->file->expects($this->once())
+      ->method('isFileExists');
     $this->reader->getDependencyList();
   }
   

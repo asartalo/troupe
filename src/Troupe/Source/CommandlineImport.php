@@ -55,4 +55,8 @@ abstract class CommandlineImport implements Source {
     );
   }
   
+  abstract function getCliCommand($url, $troupe_lib_path);
+  
+  abstract function getCheckIfSuccess($last_line);
+  
 }

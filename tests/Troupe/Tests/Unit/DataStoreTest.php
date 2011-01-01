@@ -8,7 +8,7 @@ use \Troupe\DataStore;
 class DataStoreTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
-    $this->data_directory = $this->getTestDataDirectory();
+    $this->data_directory = $this->getTestDataDir();
     $this->data_file = $this->data_directory . '/troupe.dat';
     $this->delete($this->data_file);
     $this->data_store = new DataStore($this->data_directory);
