@@ -20,6 +20,13 @@ class FactoryTest extends \Troupe\Tests\TestCase {
     $this->clearTestDataDir();
   }
   
+  function testCreatingFiles($file, $file_contents, $file_class) {
+    $file_path = $this->createTestFile($file, $file_contents);
+    $this->assertEquals(
+      new $file_class($file_path), $this->factory->getFile($file_path)
+    );
+  }
+  
   function testCreatingPhpFile() {
     $file_path = $this->createTestFile('foo.php', 'A php file...');
     $this->assertEquals(

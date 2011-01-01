@@ -75,9 +75,27 @@ class Injector {
   
   public static function injectReader(EnvironmentScope $scope) {
     return new Reader(
-      self::injectProjectRootDirectory($scope),
+      self::injectAssemblyFile($scope),
       self::injectSystemUtilities($scope)
     );
+  }
+  
+  public static function injectAssemblyFile(EnvironmentScope $scope) {
+    return self::injectFileFactory($scope)->getFile(
+      self::injectAssemblyFileEnlisted($scope)
+    );
+  }
+  
+  public static function injectFileFactory(EnvironmentScope $scope) {
+    return new File\Factory();
+  }
+  
+  public static function injectAssemblyFileEnlisted(EnvironmentScope $scope) {
+    return self::injectAssemblyFileEnlister($scope)->getAssemblyFile();
+  }
+  
+  public static function injectAssemblyFileEnlister($scope) {
+    return new AssemblyFileEnlister(self::injectProjectRootDirectory($scope));
   }
   
   public static function injectSourceFactory(EnvironmentScope $scope) {
