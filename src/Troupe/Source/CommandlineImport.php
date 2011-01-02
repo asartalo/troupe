@@ -9,7 +9,7 @@ use \Troupe\VendorDirectoryManager as VDM;
 
 abstract class CommandlineImport implements Source {
   
-  protected $system_utilities, $url, $data_directory, $vdm;
+  protected $system_utilities, $vdm;
   
   function __construct($url, VDM $vdm, SystemUtilities $system_utilities, $data_directory) {
     $this->system_utilities = $system_utilities;

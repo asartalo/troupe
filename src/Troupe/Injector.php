@@ -101,8 +101,13 @@ class Injector {
   public static function injectSourceFactory(EnvironmentScope $scope) {
     return new Source\Factory(
       self::injectSystemUtilities($scope),
-      self::injectVendorDirectoryManager($scope)
+      self::injectVendorDirectoryManager($scope),
+      self::injectExpanderFactory($scope)
     );
+  }
+  
+  public static function injectExpanderFactory(EnvironmentScope $scope) {
+    return new Expander\Factory;
   }
   
   public static function injectImporter(EnvironmentScope $scope) {

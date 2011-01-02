@@ -44,6 +44,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
     return realpath(__DIR__ . '/../../data');
   }
   
+  protected function getFixturesDir() {
+    return realpath(__DIR__ . '/../../fixtures');
+  }
+  
   protected function getTestFilePath($file) {
     $file_path = $this->getTestDataDir() . "/$file";
     return file_exists($file_path) ? $file_path : '';

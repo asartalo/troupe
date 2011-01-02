@@ -11,14 +11,15 @@ class FactoryTest extends \Troupe\Tests\TestCase {
     $this->system_utilities = $this->getMock('Troupe\SystemUtilities');
     $this->data_directory = 'a/directory';
     $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager');
+    $this->expander_factory = $this->quickMock('Troupe\Expander\Factory');
+    $this->expander = $this->quickMock('Troupe\Expander\Expander');
+    $this->expander_factory->expects($this->any())
+      ->method('getExpander')
+      ->will($this->returnValue($this->expander));
     $this->source_factory = new Factory(
-      $this->system_utilities, $this->vdm, $this->data_directory
+      $this->system_utilities, $this->vdm, $this->expander_factory,
+      $this->data_directory
     );
-  }
-  
-  function testGetSvnSource() {
-    $source = $this->source_factory->get('http://example/svn/repo', 'svn');
-    $this->assertInstanceOf('Troupe\Source\Svn', $source);
   }
   
   function testGetUnknownSource() {
@@ -28,9 +29,19 @@ class FactoryTest extends \Troupe\Tests\TestCase {
     $this->assertInstanceOf('Troupe\Source\Unknown', $source);
   }
   
+  function testGetSvnSource() {
+    $source = $this->source_factory->get('http://example/svn/repo', 'svn');
+    $this->assertInstanceOf('Troupe\Source\Svn', $source);
+  }
+  
   function testGetGitSource() {
     $source = $this->source_factory->get('git://example/foo.git/', 'git');
     $this->assertInstanceOf('Troupe\Source\Git', $source);
+  }
+  
+  function testGetZipArchiveSource() {
+    $source = $this->source_factory->get('http://example/foo.zip', 'archive');
+    $this->assertInstanceOf('Troupe\Source\ZipFile', $source);
   }
   
 }

@@ -1,19 +1,12 @@
 Troupe
 ======
 
-**Troupe** is a tool for declaring and managing application dependencies in PHP. Troupe is not yet ready. Watch out for it!
+**Troupe** is a tool for declaring and managing application dependencies in PHP.
 
-Ideas
------
+Status
+------
 
-- Declare dependencies through php code
-- Support different sources
-  - subversion
-  - git
-  - pear
-  - archive source files (tar, zip)
-- Declare where a source will be placed (default is vendor dir)
-- Declare where in the source tree the interesting part of the code is located
+Troupe can now download from, git, svn, and zip archives.
 
 Hypothetical Example
 --------------------
@@ -54,3 +47,19 @@ Then one can run this in the commandline:
    troupe assemble
 
 And voila! Dependencies solved.
+
+TODO
+-----
+
+- Declare dependencies through php code
+- Support different sources
+  - subversion - done (must have an svn client installed that can be run in terminal)
+  - git - done (must have a git client installed)
+  - pear
+  - archive source files
+    - tar 
+    - zip - done (uses the PclZip library so we're not dependent on enabling ZipLib)
+    - tar.gz
+- Declare where a source will be placed (default is vendor dir)
+- Declare where in the source tree the interesting part of the code is located
+

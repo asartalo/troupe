@@ -28,6 +28,14 @@ class SystemUtilities {
     return fwrite($handle, $string, $length);
   }
   
+  function stream_context_create($options = array(), $params = array()) {
+    return stream_context_create($options, $params);
+  }
+  
+  function stream_get_contents($handle, $maxlength = -1, $offset = -1) {
+    return stream_get_contents($handle, $maxlength, $offset);
+  }
+  
   function includeFile($file) {
     return include $file;
   }

@@ -38,6 +38,12 @@ class TestCaseTest extends TestCase {
     $this->assertEquals($this->data_dir , $this->getTestDataDir());
   }
   
+  function testGettingFixturesDir() {
+    $this->assertEquals(
+      realpath(__DIR__ . '/../../fixtures'), $this->getFixturesDir()
+    );
+  }
+  
   function testCreatingTestFile() {
     $this->createTestFile('foo.txt', 'foo bar');
     $this->assertFileExists($this->data_dir . '/foo.txt');
