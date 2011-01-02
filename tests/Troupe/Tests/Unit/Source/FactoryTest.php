@@ -41,7 +41,7 @@ class FactoryTest extends \Troupe\Tests\TestCase {
   
   function testGetZipArchiveSource() {
     $source = $this->source_factory->get('http://example/foo.zip', 'archive');
-    $this->assertInstanceOf('Troupe\Source\ZipFile', $source);
+    $this->assertInstanceOf('Troupe\Source\Archive', $source);
   }
   
 }

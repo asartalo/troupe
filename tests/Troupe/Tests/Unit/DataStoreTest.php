@@ -8,6 +8,7 @@ use \Troupe\DataStore;
 class DataStoreTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
+    $this->clearTestDataDir();
     $this->data_directory = $this->getTestDataDir();
     $this->data_file = $this->data_directory . '/troupe.dat';
     $this->delete($this->data_file);
@@ -22,6 +23,7 @@ class DataStoreTest extends \Troupe\Tests\TestCase {
   
   function tearDown() {
     $this->delete($this->data_file);
+    $this->clearTestDataDir();
   }
   
   /**
@@ -64,9 +66,9 @@ class DataStoreTest extends \Troupe\Tests\TestCase {
     $this->data_store->set('foo', 'A', 'B');
     $this->data_store->set('boo', 'far', 'faz');
     unset($this->data_store);
-    $data_file = $this->data_directory . '/troupe.dat';
-    $this->assertFileExists($data_file);
-    $data = unserialize(file_get_contents($data_file));
+    $data_file = $this->data_file;
+    $this->assertFileExists($this->data_file);
+    $data = unserialize(file_get_contents($this->data_file));
     $this->assertEquals('baz', $data['foo']['bar']);
     $this->assertEquals('B', $data['foo']['A']);
     $this->assertEquals('faz', $data['boo']['far']);

@@ -29,6 +29,7 @@ class ZipTest extends \Troupe\Tests\TestCase {
     $this->assertInternalType('array', $return);
     $this->assertContains($this->getTestFilePath('foo.txt'), $return);
     $this->assertContains($this->getTestFilePath('bar.txt'), $return);
+    $this->assertEquals(2, count($return));
   }
   
   function testExpandingZipFileWithDirectories() {
@@ -37,6 +38,14 @@ class ZipTest extends \Troupe\Tests\TestCase {
     $this->assertFileExists($this->getTestFilePath('zip_expander_test_file2/one.txt'));
     $this->assertFileExists($this->getTestFilePath('zip_expander_test_file2/two.txt'));
     $this->assertFileExists($this->getTestFilePath('zip_expander_test_file2/three'));
+  }
+  
+  function testExpandingTarFileWithDirectoriesReturnsListOfFilesExpanded() {
+    $tar_path = $this->getFixturesDir() .  '/zip_expander_test_file2.zip';
+    $return = $this->zip_expander->expand($tar_path, $this->getTestDataDir());
+    $this->assertInternalType('array', $return);
+    $this->assertContains($this->getTestFilePath('zip_expander_test_file2'), $return);
+    $this->assertEquals(1, count($return));
   }
 
 }

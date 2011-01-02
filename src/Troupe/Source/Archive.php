@@ -10,7 +10,7 @@ use \Troupe\Status\Failure;
 
 // TODO: Refactor downloading to a separate class
 // TODO: Or generalize as an Archive file and just get expander
-class ZipFile extends AbstractSource {
+class Archive extends AbstractSource {
   
   protected $expander, $system_utilities, $vdm;
 

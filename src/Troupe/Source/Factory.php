@@ -16,7 +16,7 @@ class Factory {
     $types = array(
       'svn'     => 'Svn',
       'git'     => 'Git',
-      'archive' => 'ZipFile',
+      'archive' => 'Archive',
     );
   
   function __construct(SystemUtilities $system_utilities, VDM $vdm, ExpanderFactory $expander_factory, $data_directory = '') {

@@ -11,10 +11,20 @@ class FactoryTest extends \Troupe\Tests\TestCase {
     $this->factory = new Factory;
   }
   
-  function testGettingZipExpander() {
-    $this->assertInstanceOf(
-      'Troupe\Expander\Zip', 
-      $this->factory->getExpander('http://example.com/ziparchive.zip')
+  /**
+   * @dataProvider dataGettingExpander
+   */
+  function testGettingExpander($expander_class, $url) {
+    $this->assertInstanceOf($expander_class, $this->factory->getExpander($url));
+  }
+  
+  function dataGettingExpander() {
+    return array(
+      array('Troupe\Expander\Zip', 'http://example.com/ziparchive.zip'),
+      array('Troupe\Expander\Gzip', 'http://example.com/gziparchive.gz'),
+      array('Troupe\Expander\Tar', 'http://example.com/tarfile.tar'),
+      array('Troupe\Expander\Tgz', 'http://example.com/tgzarchive.tgz'),
+      array('Troupe\Expander\Tgz', 'http://example.com/tgzarchive.tar.gz'),
     );
   }
 

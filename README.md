@@ -3,10 +3,11 @@ Troupe
 
 **Troupe** is a tool for declaring and managing application dependencies in PHP.
 
-Status
-------
+News
+----
 
-Troupe can now download from, git, svn, and zip archives.
+- January 3, 2011 GMT+8 : Importing tar archives is currently buggy
+- Troupe can now download from, git, svn, and zip archives.
 
 Hypothetical Example
 --------------------
@@ -37,16 +38,44 @@ Dependency information is stored in mytroupe.php
       
       // This is for the project settings
       '_settings' => array(
-        'vendor_dir' => 'lib/src', // Default is 'vendor',
-        
+        'vendor_dir' => 'lib/src', // Default is 'vendor'
       ),
     );
 
-Then one can run this in the commandline:
+Then one can run this in terminal:
 
    troupe assemble
 
 And voila! Dependencies solved.
+
+Requirements
+------------
+
+- PHP 5.3.x or greater
+- To uncompress gzip and zip files, PHP must be compiled with Zlib enabled
+- To import git repositories, a git client on the terminal must be installed
+- To import subversion repositories, an svn client on the terminal must be installed
+
+Known Issues
+------------
+
+- Importing tar and tar.gz archives are currently buggy.
+- This code has currently been tested on Linux (Ubuntu) only.
+
+Help Out
+--------
+
+Want to help out? Some things the project needs:
+
+- Testing
+  - Run the tests. The project currently lacks an integration test.
+  - Test in Windows
+- Feedback
+  - How does it work for you?
+  - What do you think needs to be done?
+- Improve it!
+  - You can fork the code if you like. Please note that the documentation is lacking. I'll get to that, I promise.
+  
 
 TODO
 -----
@@ -57,9 +86,9 @@ TODO
   - git - done (must have a git client installed)
   - pear
   - archive source files
-    - tar 
+    - tar - buggy
     - zip - done (uses the PclZip library so we're not dependent on enabling ZipLib)
-    - tar.gz
+    - tar.gz - buggy
 - Declare where a source will be placed (default is vendor dir)
 - Declare where in the source tree the interesting part of the code is located
 

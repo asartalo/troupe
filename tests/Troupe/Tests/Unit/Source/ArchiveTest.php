@@ -3,12 +3,12 @@ namespace Troupe\Tests\Unit\Source;
 
 require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
-use \Troupe\Source\ZipFile;
+use \Troupe\Source\Archive;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 
 
-class ZipFileTest extends \Troupe\Tests\TestCase {
+class ArchiveTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->expander  = $this->quickMock('Troupe\Expander\Zip');
@@ -16,7 +16,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
     $this->url = 'http://zip.source.com/example.zip';
     $this->data_dir = 'a/path/to/a/directory';
     $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('isDataImported', 'importSuccess'));
-    $this->zip_source = new ZipFile($this->url, $this->vdm, $this->utilities, $this->data_dir, $this->expander);
+    $this->zip_source = new Archive($this->url, $this->vdm, $this->utilities, $this->data_dir, $this->expander);
   }
   
   function testImportChecksWithVdmIfDataHasAlreadyBeenImported() {
@@ -59,7 +59,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
   
   function testImportSavesFileInDataDirectoryFirst() {
     $remote_handle = "A dummy http resource handle.";
-    $local_handle = "A local file (for the temporary zip file) handle.";
+    $local_handle = "A local file (for the temporary archive file) handle.";
     $this->vdmIsDataImported(false);
     $this->utilities->expects($this->at(0))
       ->method('fopen')
@@ -80,7 +80,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
   
   function testImportMarksUrlAsImportedOnVdm() {
     $remote_handle = "A dummy http resource handle.";
-    $local_handle = "A local file (for the temporary zip file) handle.";
+    $local_handle = "A local file (for the temporary archive file) handle.";
     $this->vdmIsDataImported(false);
     $this->utilities->expects($this->at(0))
       ->method('fopen')
@@ -102,7 +102,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
   
   function testImporReturnsSuccessStatusWhenSuccessful() {
     $remote_handle = "A dummy http resource handle.";
-    $local_handle = "A local file (for the temporary zip file) handle.";
+    $local_handle = "A local file (for the temporary archive file) handle.";
     $this->vdmIsDataImported(false);
     $this->utilities->expects($this->at(0))
       ->method('fopen')
@@ -126,7 +126,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
   
   function testImportChecksConnectionToRemoteFileFirstBeforeExpanding() {
     $remote_handle = false;
-    $local_handle = "A local file (for the temporary zip file) handle.";
+    $local_handle = "A local file (for the temporary archive file) handle.";
     $this->vdmIsDataImported(false);
     $this->utilities->expects($this->at(0))
       ->method('fopen')
@@ -140,7 +140,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
   
   function testImportReturnsFailureStatusMessageWhenConnectionFails() {
     $remote_handle = false;
-    $local_handle = "A local file (for the temporary zip file) handle.";
+    $local_handle = "A local file (for the temporary archive file) handle.";
     $this->vdmIsDataImported(false);
     $this->utilities->expects($this->at(0))
       ->method('fopen')
@@ -152,7 +152,7 @@ class ZipFileTest extends \Troupe\Tests\TestCase {
     $this->assertEquals($status, $this->zip_source->import());
   }
   
-  function testImportExpandsSavedZipFile() {
+  function testImportExpandsSavedArchiveFile() {
     $remote_handle = "A dummy http resource handle.";
     $this->utilities->expects($this->at(0))
       ->method('fopen')
