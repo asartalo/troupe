@@ -4,11 +4,12 @@ namespace Troupe\Tests\Unit\Expander;
 require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
 use \Troupe\Expander\Factory;
+use \Troupe\Utilities;
 
 class FactoryTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
-    $this->factory = new Factory;
+    $this->factory = new Factory(new Utilities);
   }
   
   /**

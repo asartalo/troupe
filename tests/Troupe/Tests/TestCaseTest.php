@@ -76,5 +76,11 @@ class TestCaseTest extends TestCase {
   function testGettingTestFilePathForFileThatDoesNotExistReturnsEmptyStr() {
     $this->assertEquals('', $this->getTestFilePath('foo.html'));
   }
+  
+  function testGettingTestExpectedFilePath() {
+    $this->assertEquals(
+      $this->data_dir . '/foo.xml', $this->getExpectedTestFilePath('foo.xml')
+    );
+  }
 
 }

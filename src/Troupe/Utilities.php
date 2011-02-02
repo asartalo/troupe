@@ -25,6 +25,11 @@ class Utilities {
     return strpos($haystack, $needle) === 0;
   }
   
+  function getFileExtension($filename) {
+    $last_dot = strrpos($filename, '.');
+    return substr($filename, $last_dot + 1);
+  }
+  
   private function ucwordsLower($string) {
     return ucwords(
       strtolower(str_replace(array('-', '_'), ' ', $string))

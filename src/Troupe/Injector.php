@@ -107,7 +107,7 @@ class Injector {
   }
   
   public static function injectExpanderFactory(EnvironmentScope $scope) {
-    return new Expander\Factory;
+    return new Expander\Factory(self::injectUtilities($scope));
   }
   
   public static function injectImporter(EnvironmentScope $scope) {

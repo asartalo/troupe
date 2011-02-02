@@ -2,14 +2,23 @@
 
 namespace Troupe\Expander;
 
+use \Troupe\Utilities;
+
 class Factory {
 
-  private $known_types = array(
+  private 
+    $tar_class,
+    $utilities,
+    $known_types = array(
     'zip' => 'Zip',
     'gz'  => 'Gzip',
     'tar' => 'Tar',
     'tgz' => 'Tgz'
   );
+  
+  function __construct(Utilities $utilities) {
+    $this->utilities = $utilities;
+  }
   
   function getExpander($url) {
     $path_info = pathinfo($url);
@@ -19,7 +28,7 @@ class Factory {
         $ext = 'tgz';
       }
       $class = "Troupe\Expander\\" . $this->known_types[$ext];
-      return new $class;
+      return new $class($this->utilities);
     }
   }
   

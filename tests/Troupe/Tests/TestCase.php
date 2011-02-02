@@ -49,8 +49,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
   }
   
   protected function getTestFilePath($file) {
-    $file_path = $this->getTestDataDir() . "/$file";
+    $file_path = $this->getExpectedTestFilePath($file);
     return file_exists($file_path) ? $file_path : '';
+  }
+  
+  protected function getExpectedTestFilePath($file) {
+    return $this->getTestDataDir() . "/$file";
   }
 
 }
