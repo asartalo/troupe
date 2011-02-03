@@ -2,7 +2,7 @@
 
 namespace Troupe\Tests;
 
-require_once __DIR__ . '/TestCase.php';
+require_once realpath(__DIR__ . '/../../bootstrap.php');
 
 class TestCaseTest extends TestCase {
   

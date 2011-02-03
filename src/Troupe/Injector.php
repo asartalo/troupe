@@ -74,7 +74,7 @@ class Injector {
   }
   
   public static function injectReader(EnvironmentScope $scope) {
-    return new Reader(
+    return new Reader\Php(
       self::injectAssemblyFile($scope),
       self::injectSystemUtilities($scope)
     );

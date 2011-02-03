@@ -7,7 +7,7 @@ use \Troupe\Dependency\Dependency;
 use \Troupe\Source\Source;
 use \Troupe\Status\Success;
 
-class DependencyTest extends \PHPUnit_Framework_TestCase {
+class DependencyTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->project_name = 'foo';

@@ -7,7 +7,7 @@ use \Troupe\Cli\Command;
 use \Troupe\Cli\Executor;
 use \Troupe\Cli\Controller;
 
-class ControllerTest extends \PHPUnit_Framework_TestCase {
+class ControllerTest extends \Troupe\Tests\TestCase {
   
   function setUp() {
     // This is called to help the reflector

@@ -5,7 +5,7 @@ require_once realpath(__DIR__ . '/../../../bootstrap.php');
 
 use \Troupe\Settings;
 
-class SettingsTest extends \PHPUnit_Framework_TestCase {
+class SettingsTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $options = array(

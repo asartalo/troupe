@@ -5,7 +5,7 @@ require_once realpath(__DIR__ . '/../../../bootstrap.php');
 
 use \Troupe\Utilities;
 
-class UtilitiesTest extends \PHPUnit_Framework_TestCase {
+class UtilitiesTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->utilities = new Utilities;

@@ -8,7 +8,7 @@ use \Troupe\Cli\Interpreter;
 
 
 
-class InterpreterTest extends \PHPUnit_Framework_TestCase {
+class InterpreterTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->interpreter = new Interpreter;

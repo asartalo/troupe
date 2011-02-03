@@ -1,12 +1,12 @@
 <?php
-namespace Troupe\Tests\Unit;
+namespace Troupe\Tests\Unit\Reader;
 
-require_once realpath(__DIR__ . '/../../../bootstrap.php');
+require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
-use \Troupe\Reader;
+use \Troupe\Reader\Php;
 use \Troupe\Utilities;
 
-class ReaderTest extends \Troupe\Tests\TestCase {
+class PhpTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
@@ -15,7 +15,7 @@ class ReaderTest extends \Troupe\Tests\TestCase {
     $this->file->expects($this->any())
       ->method('getPath')
       ->will($this->returnValue('a/directory/mytroupe.php'));
-    $this->reader = new Reader(
+    $this->reader = new Php(
       $this->file, $this->system_utilities
     );
   }

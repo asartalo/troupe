@@ -8,7 +8,7 @@ use \Troupe\Cli\Executor;
 use \Troupe\Utilities;
 
 
-class ExecutorTest extends \PHPUnit_Framework_TestCase {
+class ExecutorTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->executor = new Executor(new Utilities);

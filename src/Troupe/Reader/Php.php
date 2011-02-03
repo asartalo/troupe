@@ -1,10 +1,11 @@
 <?php
 
-namespace Troupe;
+namespace Troupe\Reader;
 
 use \Troupe\File\File;
+use \Troupe\SystemUtilities;
 
-class Reader {
+class Php implements Reader {
   
   private
     $project_dir,
@@ -13,8 +14,8 @@ class Reader {
     $list_cache;
   
   function __construct(File $assembly_file, SystemUtilities $system_utilities) {
+  	$this->assembly_file = $assembly_file;
     $this->system_utilities = $system_utilities;
-    $this->assembly_file = $assembly_file;
   }
   
   function getDependencyList() {
