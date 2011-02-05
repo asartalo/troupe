@@ -10,7 +10,6 @@ class IniTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
-    $this->project_directory = 'a/directory';
     $this->file = $this->quickMock('Troupe\File\Ini');
     $this->file->expects($this->any())
       ->method('getPath')

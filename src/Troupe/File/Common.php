@@ -2,6 +2,7 @@
 
 namespace Troupe\File;
 
+// TODO: Change this to abstract class
 class Common implements File {
   
   private $path;
