@@ -7,15 +7,19 @@ require_once realpath(__DIR__ . '/../../../bootstrap.php');
 class StandardUseCaseTest extends \PHPUnit_Framework_TestCase {
   
   function setUp() {
-    
+    $this->data_dir = realpath(__DIR__ . '/../../../../data');
   }
   
   function testBasicIntegration() {
-    $data_dir = realpath(__DIR__ . '/../../../../data');
+    $args = array();
 		$scope = new \Troupe\EnvironmentScope(
-		  array(), getcwd(), $data_dir, array()
+		  array(), getcwd(), $this->data_dir, $args
 		);
 		\Troupe\Injector::injectEnvironmentHelper($scope)->run();
+  }
+  
+  function testSettingGlobalSettings() {
+    $this->markTestIncomplete();
   }
   
 }
