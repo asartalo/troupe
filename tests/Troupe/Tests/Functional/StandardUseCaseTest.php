@@ -12,10 +12,10 @@ class StandardUseCaseTest extends \PHPUnit_Framework_TestCase {
   
   function testBasicIntegration() {
     $args = array();
-		$scope = new \Troupe\EnvironmentScope(
-		  array(), getcwd(), $this->data_dir, $args
-		);
-		\Troupe\Injector::injectEnvironmentHelper($scope)->run();
+		$container = new \Troupe\Container(
+      array(), getcwd(), $this->data_dir, $args
+    );
+    $container->EnvironmentHelper->run();
   }
   
   function testSettingGlobalSettings() {

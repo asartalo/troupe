@@ -5,11 +5,16 @@ require_once realpath(__DIR__ . '/../src/SplClassLoader.php');
 $path = realpath(__DIR__ . '/../src/');
 $classLoader = new SplClassLoader('Troupe', $path);
 $classLoader->register();
-
+require_once $path . '/Pimple/lib/Pimple.php';
+/*
+// For some reason this does not work:
+$classLoader = new SplClassLoader('Pimple', $path . '/Pimple/lib');
+$classLoader->register();
+*/
 $data_dir = realpath(__DIR__ . '/../data');
-$scope = new \Troupe\EnvironmentScope(
+$container = new \Troupe\Container(
   $_ENV, getcwd(), $data_dir, $argv
 );
-\Troupe\Injector::injectEnvironmentHelper($scope)->run();
+$container->EnvironmentHelper->run();
 ?>
 
