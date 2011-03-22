@@ -7,7 +7,7 @@ require_once realpath(__DIR__ . '/../../bootstrap.php');
 class TestCaseTest extends TestCase {
   
   function setUp() {
-    $this->data_dir = realpath(__DIR__ . '/../../data');
+    $this->data_dir = realpath(__DIR__ . '/../..') . '/data';
   }
   
   function tearDown() {
@@ -42,6 +42,12 @@ class TestCaseTest extends TestCase {
     $this->assertEquals(
       realpath(__DIR__ . '/../../fixtures'), $this->getFixturesDir()
     );
+  }
+  
+  function testCreateTestDataDirIfItDoesNotExistYet() {
+    $this->deleteDir($this->data_dir);
+    $this->getTestDataDir();
+    $this->assertFileExists($this->data_dir);
   }
   
   function testCreatingTestFile() {
