@@ -23,5 +23,11 @@
     <whitelist addUncoveredFilesFromWhitelist="true">
       <directory suffix=".php">src</directory>
     </whitelist>
+    <blacklist>
+      <directory suffix=".php">src/PclZip</directory>
+      <directory suffix=".php">src/Pimple</directory>
+      <file>src/SplClassLoader.php</file>
+    </blacklist>
+
   </filter>
 </phpunit>
