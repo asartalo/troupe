@@ -4,10 +4,9 @@ namespace Troupe;
 
 class Container extends \Pimple {
   
-  function __construct($env, $cwd, $data_dir, $args) {
+  function __construct($env, $cwd, $args) {
     $this->env = $env;
     $this->cwd = $cwd;
-    $this->data_dir = $data_dir;
     $this->args = $args;
     $this->defineGraph();
   }
@@ -53,8 +52,17 @@ class Container extends \Pimple {
     };
 
     $this->Dependencies = function(\Pimple $c) {
+      /*$dependencies = array();
+      foreach ($c->TroupeList as $name => $options) {
+        $dependencies[] = $c->DependencyContainer->Dependency;
+      }
+      return $dependencies;*/
       return $c->DependencyFactory
         ->getDependencies($c->TroupeList);
+    };
+    
+    $this->DependencyContainer = function (\Pimple $c) {
+      
     };
 
     $this->DependencyFactory = function(\Pimple $c) {
@@ -101,8 +109,13 @@ class Container extends \Pimple {
 
     $this->SourceFactory = function(\Pimple $c) {
       return new Source\Factory(
-        $c->SystemUtilities, $c->VendorDirectoryManager, $c->ExpanderFactory
+        $c->SystemUtilities, $c->Executor, $c->VendorDirectoryManager,
+        $c->ExpanderFactory, $c->Cibo, $c->data_dir
       );
+    };
+    
+    $this->Executor = function(\Pimple $c) {
+      return new Executor;
     };
 
     $this->ExpanderFactory = function(\Pimple $c) {
@@ -122,6 +135,10 @@ class Container extends \Pimple {
     $this->DataStore = $this->asShared(function(\Pimple $c) {
       return new DataStore($c->data_dir);
     });
+    
+    $this->data_dir = function (\Pimple $c) {
+      return $c->Settings->get('data_dir');
+    };
 
     $this->SystemUtilities = $this->asShared(function(\Pimple $c) {
       return new SystemUtilities;
@@ -148,6 +165,11 @@ class Container extends \Pimple {
     $this->FileWriter = function(\Pimple $c) {
       return new FileWriter;
     };
+    
+    $this->Cibo = function(\Pimple $c) {
+      return new \Cibo;
+    };
+    
   }
 
 }

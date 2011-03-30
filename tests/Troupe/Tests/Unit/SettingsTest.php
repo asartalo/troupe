@@ -23,5 +23,13 @@ class SettingsTest extends \Troupe\Tests\TestCase {
     $settings = new Settings(array('vendor_dir' => 'lib/src'));
     $this->assertEquals('lib/src', $settings->get('vendor_dir'));
   }
+  
+  function testDefaultDataDirectory() {
+    $settings = new Settings();
+    $this->assertEquals(
+      realpath(__DIR__ . '/../../../../data'),
+      $settings->get('data_dir')
+    );
+  }
 
 }

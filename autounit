@@ -19,6 +19,7 @@ watch('src/Troupe/(.*)\.php') do |md|   # runs tests/ClassTest* whenever src/Cla
   if (File.exist?(testpath))
     system("phpunit #{testpath}")
   else
-    puts "No unit test found for #{md[0]}"
+    # puts "No unit test found for #{md[0]}"
+    system("phpunit tests")
   end
 end

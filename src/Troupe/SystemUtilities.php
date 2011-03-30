@@ -4,11 +4,6 @@ namespace Troupe;
 
 class SystemUtilities {
   
-  function execute($command) {
-    exec($command, $output);
-    return $output;
-  }
-  
   function fclose($handle) {
     return fclose($handle);
   }
@@ -57,11 +52,6 @@ class SystemUtilities {
   
   function symlink($target, $link) {
     symlink($target, $link);
-  }
-  
-  function system($command) {
-    echo $command. "\n";
-    return system($command);
   }
   
   function umask($mode = null) {

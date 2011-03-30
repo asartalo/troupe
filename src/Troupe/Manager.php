@@ -30,6 +30,7 @@ class Manager {
     return $this->dependencies;
   }
   
+  // TODO: rename to importDependencies
   function manageDependencies() {
     foreach ($this->dependencies as $dependency) {
       $this->system_utilities->out(

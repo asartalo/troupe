@@ -1,3 +1,4 @@
 NEXT:
-- Implement Add Ability to Import from downloadable files (.zip, tar.gz, etc.)
-  - Done with zip file
+- Refactor Dependency Creation
+  - Separate the dependency scope
+  - Replace the Source Factory with a DI Container

@@ -13,7 +13,7 @@ class StandardUseCaseTest extends \PHPUnit_Framework_TestCase {
   function testBasicIntegration() {
     $args = array();
 		$container = new \Troupe\Container(
-      array(), getcwd(), $this->data_dir, $args
+      array(), getcwd(), $args
     );
     $container->EnvironmentHelper->run();
   }

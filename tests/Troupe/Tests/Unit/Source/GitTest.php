@@ -11,11 +11,11 @@ use \Troupe\Status\Failure;
 class GitTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
-    $this->utilities  = $this->getMock('Troupe\SystemUtilities');
+    $this->executor  = $this->getMock('Troupe\Executor');
     $this->url = 'http://git.source.com/example';
     $this->data_dir = 'a/path/to/a/directory';
     $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('isDataImported', 'importSuccess'));
-    $this->git_source = new Git($this->url, $this->vdm, $this->utilities, $this->data_dir);
+    $this->git_source = new Git($this->url, $this->vdm, $this->executor, $this->data_dir);
   }
   
   function testImportChecksWithVdmIfDataHasAlreadyBeenImported() {
@@ -34,7 +34,7 @@ class GitTest extends \Troupe\Tests\TestCase {
   function testImport() {
     $folder_name = md5($this->url);
     $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->once())
+    $this->executor->expects($this->once())
       ->method('system')
       ->with("git clone '{$this->url}' '{$this->data_dir}/$folder_name'");
     $this->git_source->import();
@@ -43,7 +43,7 @@ class GitTest extends \Troupe\Tests\TestCase {
   function testImportSkipsCheckoutIfDataHasAlreadyBeenImported() {
     $folder_name = md5($this->url);
     $this->vdmIsDataImported(true);
-    $this->utilities->expects($this->never())
+    $this->executor->expects($this->never())
       ->method('system');
     $this->git_source->import();
   }
@@ -60,7 +60,7 @@ class GitTest extends \Troupe\Tests\TestCase {
   }
   
   function checkOutIsSuccessful() {
-    $this->utilities->expects($this->once())
+    $this->executor->expects($this->once())
       ->method('system')
       ->will($this->returnValue('Initialized empty Git repository in foo/bar.'));
   }
@@ -91,7 +91,7 @@ class GitTest extends \Troupe\Tests\TestCase {
     $status = new Failure(
       \Troupe\Source\STATUS_FAIL, "FAIL: Unable to import {$this->url}."
     );
-    $this->utilities->expects($this->once())
+    $this->executor->expects($this->once())
       ->method('system')
       ->will($this->returnValue('Foo.'));
     $this->assertEquals($status, $this->git_source->import());
@@ -100,7 +100,7 @@ class GitTest extends \Troupe\Tests\TestCase {
   function testImportSkipsImportSuccessIfNotSuccessful() {
     $folder_name = md5($this->url);
     $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->once())
+    $this->executor->expects($this->once())
       ->method('system')
       ->will($this->returnValue('Foo.'));
     $this->vdm->expects($this->never())

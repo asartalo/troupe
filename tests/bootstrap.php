@@ -1,6 +1,10 @@
 <?php
 require_once realpath(__DIR__ . '/../src/SplClassLoader.php');
 require_once __DIR__ . '/Troupe/Tests/TestCase.php';
-$classLoader = new SplClassLoader('Troupe', realpath(__DIR__ . '/../src/'));
+$src_path = realpath(__DIR__ . '/../src/');
+$classLoader = new SplClassLoader('Troupe', $src_path);
 $classLoader->register();
-require_once realpath(__DIR__ . '/../src/Pimple/lib/Pimple.php');
+$classLoader = new SplClassLoader('Cibo', $src_path . '/Cibo/src');
+$classLoader->register();
+$classLoader = new SplClassLoader('Pimple', $src_path . '/Pimple/lib');
+$classLoader->register();

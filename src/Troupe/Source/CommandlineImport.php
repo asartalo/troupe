@@ -2,17 +2,17 @@
 
 namespace Troupe\Source;
 
-use \Troupe\SystemUtilities;
+use \Troupe\Executor;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 use \Troupe\VendorDirectoryManager as VDM;
 
 abstract class CommandlineImport implements Source {
   
-  protected $system_utilities, $vdm;
+  protected $executor, $vdm;
   
-  function __construct($url, VDM $vdm, SystemUtilities $system_utilities, $data_directory) {
-    $this->system_utilities = $system_utilities;
+  function __construct($url, VDM $vdm, Executor $executor, $data_directory) {
+    $this->executor = $executor;
     $this->url = $url;
     $this->data_directory = $data_directory;
     $this->vdm = $vdm;
@@ -39,7 +39,7 @@ abstract class CommandlineImport implements Source {
   }
   
   private function checkOut($troupe_lib_path) {
-    $output = $this->system_utilities->system(
+    $output = $this->executor->system(
       $this->getCliCommand($this->url, $troupe_lib_path)
     );
     if ($this->getCheckIfSuccess($output)) {

@@ -1,3 +1,6 @@
 [submodule "src/Pimple"]
 	path = src/Pimple
 	url = https://github.com/fabpot/Pimple.git
+[submodule "src/Cibo"]
+	path = src/Cibo
+	url = git://github.com/asartalo/cibo.git

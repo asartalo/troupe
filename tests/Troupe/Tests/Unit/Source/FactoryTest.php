@@ -9,16 +9,18 @@ class FactoryTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->system_utilities = $this->getMock('Troupe\SystemUtilities');
+    $this->executor = $this->getMock('Troupe\Executor');
     $this->data_directory = 'a/directory';
     $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager');
     $this->expander_factory = $this->quickMock('Troupe\Expander\Factory');
+    $this->cibo = $this->quickMock('Cibo');
     $this->expander = $this->quickMock('Troupe\Expander\Expander');
     $this->expander_factory->expects($this->any())
       ->method('getExpander')
       ->will($this->returnValue($this->expander));
     $this->source_factory = new Factory(
-      $this->system_utilities, $this->vdm, $this->expander_factory,
-      $this->data_directory
+      $this->system_utilities, $this->executor, $this->vdm,
+      $this->expander_factory, $this->cibo, $this->data_directory
     );
   }
   

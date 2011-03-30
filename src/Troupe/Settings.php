@@ -8,7 +8,8 @@ class Settings {
     'vendor_dir' => 'vendor'
   );
   
-  function __construct(array $options) {
+  function __construct(array $options = array()) {
+    $this->options['data_dir'] = realpath(__DIR__ . '/../../data');
     $this->options = array_merge($this->options, $options);
   }
   

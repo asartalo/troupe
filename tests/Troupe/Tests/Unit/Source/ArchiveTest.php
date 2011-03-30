@@ -15,35 +15,50 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     $this->utilities = $this->quickMock('Troupe\SystemUtilities');
     $this->url = 'http://zip.source.com/example.zip';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('isDataImported', 'importSuccess'));
-    $this->zip_source = new Archive($this->url, $this->vdm, $this->utilities, $this->data_dir, $this->expander);
+    $this->cibo = $this->quickMock('Cibo');
+    $this->vdm = $this->quickMock(
+      'Troupe\VendorDirectoryManager',
+      array('isDataImported', 'importSuccess')
+    );
+    $this->zip_source = new Archive(
+      $this->url, $this->vdm, $this->utilities, $this->data_dir,
+      $this->expander, $this->cibo
+    );
   }
   
   function testImportChecksWithVdmIfDataHasAlreadyBeenImported() {
-    $this->vdm->expects($this->once())
-      ->method('isDataImported')
-      ->with($this->url);
+    $this->vdmExpectsIsDataImported()->with($this->url);
     $this->zip_source->import();
   }
   
   private function vdmIsDataImported($bool) {
+    return $this->vdmExpectsIsDataImported()
+      ->will($this->returnValue($bool));
+  }
+  
+  private function vdmExpectsIsDataImported() {
     return $this->vdm->expects($this->once())
-      ->method('isDataImported')
+      ->method('isDataImported');
+  }
+  
+  private function ciboDownload($bool) {
+    return $this->cibo->expects($this->once())
+      ->method('download')
       ->will($this->returnValue($bool));
   }
 
   function testImportDownloadsFile() {
     $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->with($this->url, 'rb');
+    $this->cibo->expects($this->once())
+      ->method('download')
+      ->with($this->url, $this->data_dir . '/example.zip');
     $this->zip_source->import();
   }
   
   function testImportSkipsDownloadIfFileHasAlreadyBeenImported() {
     $this->vdmIsDataImported(true);
-    $this->utilities->expects($this->never())
-      ->method('fopen');
+    $this->cibo->expects($this->never())
+      ->method('download');
     $this->zip_source->import();
   }
   
@@ -51,71 +66,33 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     $folder_name = md5($this->url);
     $this->vdmIsDataImported(true);
     $status = new Success(
-      \Troupe\Source\STATUS_OK, "SUCCESS: {$this->url} has already been imported.",
+      \Troupe\Source\STATUS_OK,
+      "SUCCESS: {$this->url} has already been imported.",
       "{$this->data_dir}/$folder_name"
     );
     $this->assertEquals($status, $this->zip_source->import());
   }
   
-  function testImportSavesFileInDataDirectoryFirst() {
-    $remote_handle = "A dummy http resource handle.";
-    $local_handle = "A local file (for the temporary archive file) handle.";
+  function testImportMarksUrlAsImportedOnVdmWhenDownloadIsSuccessful() {
     $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->will($this->returnValue($remote_handle));
-    $this->utilities->expects($this->at(1))
-      ->method('fopen')
-      ->with($this->data_dir . '/example.zip', 'wb')
-      ->will($this->returnValue($local_handle));
-    $this->utilities->expects($this->once())
-      ->method('stream_get_contents')
-      ->with($remote_handle)
-      ->will($this->returnValue('foo'));
-    $this->utilities->expects($this->once())
-      ->method('fwrite')
-      ->with($local_handle, 'foo');
-    $this->zip_source->import();
-  }
-  
-  function testImportMarksUrlAsImportedOnVdm() {
-    $remote_handle = "A dummy http resource handle.";
-    $local_handle = "A local file (for the temporary archive file) handle.";
-    $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->will($this->returnValue($remote_handle));
-    $this->utilities->expects($this->at(1))
-      ->method('fopen')
-      ->will($this->returnValue($local_handle));
-    $this->utilities->expects($this->once())
-      ->method('stream_get_contents')
-      ->will($this->returnValue('foo'));
-    $this->utilities->expects($this->once())
-      ->method('fwrite')
-      ->with($local_handle, 'foo');
+    $this->ciboDownload(true);
     $this->vdm->expects($this->once())
       ->method('importSuccess')
       ->with($this->url);
     $this->zip_source->import();
   }
   
-  function testImporReturnsSuccessStatusWhenSuccessful() {
-    $remote_handle = "A dummy http resource handle.";
-    $local_handle = "A local file (for the temporary archive file) handle.";
+  function testImportDoesNotMarkUrlAsImportedOnVdmWhenDownloadIsUnsuccessful() {
     $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->will($this->returnValue($remote_handle));
-    $this->utilities->expects($this->at(1))
-      ->method('fopen')
-      ->will($this->returnValue($local_handle));
-    $this->utilities->expects($this->once())
-      ->method('stream_get_contents')
-      ->will($this->returnValue('foo'));
-    $this->utilities->expects($this->once())
-      ->method('fwrite')
-      ->with($local_handle, 'foo');
+    $this->ciboDownload(false);
+    $this->vdm->expects($this->never())
+      ->method('importSuccess');
+    $this->zip_source->import();
+  }
+  
+  function testImporReturnsSuccessStatusWhenSuccessful() {
+    $this->vdmIsDataImported(false);
+    $this->ciboDownload(true);
     $status = new Success(
       \Troupe\Source\STATUS_OK,
       "SUCCESS: Imported {$this->url}.",
@@ -124,44 +101,34 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     $this->assertEquals($status, $this->zip_source->import());
   }
   
-  function testImportChecksConnectionToRemoteFileFirstBeforeExpanding() {
-    $remote_handle = false;
-    $local_handle = "A local file (for the temporary archive file) handle.";
+  function testImporReturnsFailureStatusWhenDownloadIsUnsuccessful() {
     $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->will($this->returnValue($remote_handle));
-    $this->utilities->expects($this->never())
-      ->method('stream_get_contents');
-    $this->utilities->expects($this->never())
-      ->method('fwrite');
-    $this->zip_source->import();
-  }
-  
-  function testImportReturnsFailureStatusMessageWhenConnectionFails() {
-    $remote_handle = false;
-    $local_handle = "A local file (for the temporary archive file) handle.";
-    $this->vdmIsDataImported(false);
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->will($this->returnValue($remote_handle));
+    $this->ciboDownload(false);
     $status = new Failure(
       \Troupe\Source\STATUS_FAIL,
-      "FAIL: Unable to import {$this->url}. There was a problem connecting to the remote resource."
+      "FAIL: Unable to import {$this->url}. There was a problem downloading " .
+      "the remote resource."
     );
     $this->assertEquals($status, $this->zip_source->import());
   }
   
-  function testImportExpandsSavedArchiveFile() {
-    $remote_handle = "A dummy http resource handle.";
-    $this->utilities->expects($this->at(0))
-      ->method('fopen')
-      ->will($this->returnValue($remote_handle));
+  function testImportExpandsDownloadedFile() {
     $this->vdmIsDataImported(false);
-    $saved_zip_file = $this->data_dir . '/example.zip';
+    $this->ciboDownload(true);
     $this->expander->expects($this->once())
       ->method('expand')
-      ->with($saved_zip_file, $this->data_dir . '/' . md5($this->url));
+      ->with(
+        $this->data_dir . '/example.zip',
+        $this->data_dir . '/' . md5($this->url)
+      );
+    $this->zip_source->import();
+  }
+  
+  function testImportDoesNotExpandFileWhenDownloadIsUnsuccessful() {
+    $this->vdmIsDataImported(false);
+    $this->ciboDownload(false);
+    $this->expander->expects($this->never())
+      ->method('expand');
     $this->zip_source->import();
   }
   

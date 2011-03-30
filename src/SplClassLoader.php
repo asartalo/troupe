@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * This is a modified version of the SplClassLoader. The modification now allows
+ * for loading single classes (e.g. Pimple.php).
+ *
+ * @author Wayne Duran <asartalo@projectweb.ph>
+ *
  * SplClassLoader implementation that implements the technical interoperability
  * standards for PHP 5.3 namespaces and class names.
  *
@@ -120,16 +125,26 @@ class SplClassLoader
      */
     public function loadClass($className)
     {
-        if (null === $this->_namespace || $this->_namespace.$this->_namespaceSeparator === substr($className, 0, strlen($this->_namespace.$this->_namespaceSeparator))) {
+        if (
+            null === $this->_namespace ||
+            $this->_namespace == $className ||
+            $this->_namespace.$this->_namespaceSeparator ===
+                substr(
+                    $className, 0, strlen(
+                        $this->_namespace.$this->_namespaceSeparator
+                    )
+                )
+        ) {
             $fileName = '';
             $namespace = '';
-            if (false !== ($lastNsPos = strripos($className, $this->_namespaceSeparator))) {
+            if ($className == $this->_namespace) {
+                $fileName .= $className . $this->_fileExtension;
+            } elseif (false !== ($lastNsPos = strripos($className, $this->_namespaceSeparator))) {
                 $namespace = substr($className, 0, $lastNsPos);
                 $className = substr($className, $lastNsPos + 1);
                 $fileName = str_replace($this->_namespaceSeparator, DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+                $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
             }
-            $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
-
             require ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
         }
     }
