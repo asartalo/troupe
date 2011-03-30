@@ -30,8 +30,13 @@ class Manager {
     return $this->dependencies;
   }
   
+  // TODO: This is probably useless
+  function getVendorDirectory() {
+    return $this->project_root_dir . '/' . $this->vdm->getVendorDir();
+  }
+  
   // TODO: rename to importDependencies
-  function manageDependencies() {
+  function importDependencies() {
     foreach ($this->dependencies as $dependency) {
       $this->system_utilities->out(
         "\n==========\nImporting: {$dependency->getName()}"

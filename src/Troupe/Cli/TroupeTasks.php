@@ -23,7 +23,7 @@ class TroupeTasks implements Tasks {
   }
   
   function taskAssemble() {
-    $this->manager->manageDependencies();
+    $this->manager->importDependencies();
   }
   
 }

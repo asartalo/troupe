@@ -17,7 +17,7 @@ class TroupeTasksTest extends \Troupe\Tests\TestCase {
   
   function testAssemble() {
     $this->manager->expects($this->once())
-      ->method('manageDependencies');
+      ->method('importDependencies');
     $this->troupe_tasks->taskAssemble();
   }
   

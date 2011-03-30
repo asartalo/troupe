@@ -31,13 +31,13 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     );
   }
   
-  function testManageDependenciesAsksVdmForVendorDirectory() {
+  function testimportDependenciesAsksVdmForVendorDirectory() {
     $this->vdm->expects($this->exactly(2))
       ->method('getVendorDir');
-    $this->manager->manageDependencies();
+    $this->manager->importDependencies();
   }
   
-  function testManageDependenciesPassesDependenciesToImporter() {
+  function testimportDependenciesPassesDependenciesToImporter() {
     $this->vdm->expects($this->any())
       ->method('getVendorDir')
       ->will($this->returnValue('foo/bar'));
@@ -47,10 +47,10 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->importer->expects($this->at(1))
       ->method('import')
       ->with('foo/bar', $this->dependency2);
-    $this->manager->manageDependencies();
+    $this->manager->importDependencies();
   }
   
-  function testManageDependenciesSaysImportingMessage() {
+  function testimportDependenciesSaysImportingMessage() {
     $this->dependency1->expects($this->any())
       ->method('getName')
       ->will($this->returnValue('Foo'));
@@ -63,10 +63,10 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->system_utilities->expects($this->at(1))
       ->method('out')
       ->with("\n==========\nImporting: Bar");
-    $this->manager->manageDependencies();
+    $this->manager->importDependencies();
   }
   
-  function testManageDependenciesPassesImportStatusToLogger() {
+  function testimportDependenciesPassesImportStatusToLogger() {
     $status = $this->quickMock('Troupe\Status\Status');
     $this->importer->expects($this->any())
       ->method('import')
@@ -74,7 +74,17 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->logger->expects($this->exactly(2))
       ->method('log')
       ->with('import_results', $status);
-    $this->manager->manageDependencies();
+    $this->manager->importDependencies();
+  }
+  
+  function testGettingVendorDirectory() {
+    $this->vdm->expects($this->any())
+      ->method('getVendorDir')
+      ->will($this->returnValue('foo/bar'));
+    $this->assertEquals(
+      'a/foo/path/foo/bar',
+      $this->manager->getVendorDirectory()
+    );
   }
   
 }
