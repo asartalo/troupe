@@ -11,6 +11,17 @@ class Container extends \Pimple {
     $this->defineGraph();
   }
   
+  function dependencyContainerEntrance(
+    $name, $cwd, $settings, $options, $vdm, $executor, $system_utilities,
+    $data_directory
+  ) {
+    return new Dependency\Container(
+      $name, $cwd, $settings, $options,
+      $vdm, $executor, $system_utilities,
+      $data_directory
+    );
+  }
+  
   private function defineGraph() {
     $this->EnvironmentHelper = function(\Pimple $c) {
       return new EnvironmentHelper(
@@ -52,32 +63,29 @@ class Container extends \Pimple {
     };
 
     $this->Dependencies = function(\Pimple $c) {
-      /*$dependencies = array();
+      $dependencies = array();
+      // Enter scope!!!
       foreach ($c->TroupeList as $name => $options) {
-        $dependencies[] = $c->DependencyContainer->Dependency;
+        $dependencies[] = $c->dependencyContainerEntrance(
+          $name, $c->cwd, $c->Settings, $options,
+          $c->VendorDirectoryManager, $c->Executor, $c->SystemUtilities,
+          $c->data_directory
+        )->Dependency;
       }
-      return $dependencies;*/
-      return $c->DependencyFactory
-        ->getDependencies($c->TroupeList);
+      return $dependencies;
     };
     
-    $this->DependencyContainer = function (\Pimple $c) {
-      
-    };
-
-    $this->DependencyFactory = function(\Pimple $c) {
-      return new Dependency\Factory(
-        $c->SourceFactory, $c->ProjectRootDirectory, $c->Settings
-      );
+    $this->data_directory = function(\Pimple $c) {
+      return $c->Settings->get('data_dir');
     };
 
     $this->TroupeList = function(\Pimple $c) {
       return $c->Reader->getDependencyList();
     };
 
-    $this->Settings = function(\Pimple $c) {
+    $this->Settings = $this->asShared(function(\Pimple $c) {
       return new Settings($c->RawSettingsData);
-    };
+    });
 
     $this->RawSettingsData = function(\Pimple $c) {
       return $c->Reader->getSettings();
@@ -105,13 +113,6 @@ class Container extends \Pimple {
 
     $this->AssemblyFileEnlister = function(\Pimple $c) {
       return new AssemblyFileEnlister($c->ProjectRootDirectory);
-    };
-
-    $this->SourceFactory = function(\Pimple $c) {
-      return new Source\Factory(
-        $c->SystemUtilities, $c->Executor, $c->VendorDirectoryManager,
-        $c->ExpanderFactory, $c->Cibo, $c->data_dir
-      );
     };
     
     $this->Executor = function(\Pimple $c) {
