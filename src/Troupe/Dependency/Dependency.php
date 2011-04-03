@@ -36,4 +36,16 @@ class Dependency {
     return $this->source->getDataDir();
   }
   
+  function getUrl() {
+    return $this->source->getUrl();
+  }
+  
+  function __toString() {
+    if ($this->alias) {
+      return "{$this->name} ({$this->alias}) : {$this->getUrl()}";
+    } else {
+      return "{$this->name} : {$this->getUrl()}";
+    }
+  }
+  
 }

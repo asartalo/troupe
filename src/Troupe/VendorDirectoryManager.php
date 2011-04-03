@@ -35,7 +35,7 @@ class VendorDirectoryManager {
     $this->utilities->symlink($target, $link);
   }
   
-  // TODO: Stop checking if file exists when it already is
+  // TODO: Stop checking if file exists when it already does
   function getVendorDir() {
     $vendor_dir = $this->settings->get('vendor_dir');
     if (!$this->fileExists($vendor_dir)) {

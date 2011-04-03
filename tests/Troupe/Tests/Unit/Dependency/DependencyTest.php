@@ -10,12 +10,12 @@ use \Troupe\Status\Success;
 class DependencyTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
-    $this->project_name = 'foo';
+    $this->name = 'foo';
     $this->source = $this->getMock('Troupe\Source\Source'); 
     $this->local_dir = 'path/to/project';
     $this->alias = 'foo_bar';
     $this->dependency = new Dependency(
-      $this->project_name, $this->source, $this->local_dir, $this->alias
+      $this->name, $this->source, $this->local_dir, $this->alias
     );
   }
   
@@ -43,7 +43,7 @@ class DependencyTest extends \Troupe\Tests\TestCase {
   
   function testLocalLocationWhenNoAliasIsSpecified() {
     $this->dependency = new Dependency(
-      $this->project_name, $this->source, $this->local_dir
+      $this->name, $this->source, $this->local_dir
     );
     $this->assertEquals(
       'path/to/project/foo', $this->dependency->getLocalLocation()
@@ -61,6 +61,36 @@ class DependencyTest extends \Troupe\Tests\TestCase {
       ->method('getDataDir')
       ->will($this->returnValue('foo'));
     $this->assertEquals('foo', $this->dependency->getDataLocation());
+  }
+  
+  function testGetUrlReturnsUrlFromSource() {
+    $this->source->expects($this->once())
+      ->method('getUrl')
+      ->will($this->returnValue('http://foo.com/foo'));
+    $this->assertEquals('http://foo.com/foo', $this->dependency->getUrl());
+  }
+  
+  function testToStringOutputsNameWithAliasAndUrl() {
+    $this->source->expects($this->once())
+      ->method('getUrl')
+      ->will($this->returnValue('http://foo.com/foo'));
+    $this->assertEquals(
+      "{$this->name} ({$this->alias}) : http://foo.com/foo",
+      $this->dependency->__toString()
+    );
+  }
+  
+  function testToStringOutputsOnlyNameAndUrlWhenNoAliasIsDefined() {
+    $this->dependency = new Dependency(
+      $this->name, $this->source, $this->local_dir
+    );
+    $this->source->expects($this->once())
+      ->method('getUrl')
+      ->will($this->returnValue('http://foo.com/foo'));
+    $this->assertEquals(
+      "{$this->name} : http://foo.com/foo",
+      $this->dependency->__toString()
+    );
   }
   
 }

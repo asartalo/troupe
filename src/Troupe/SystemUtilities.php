@@ -42,10 +42,6 @@ class SystemUtilities {
     return mkdir($pathname, $mode, $recursive);
   }
   
-  function out($string) {
-    echo $string, "\n";
-  }
-  
   function readlink($link) {
     return readlink($link);
   }

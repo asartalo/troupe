@@ -9,11 +9,11 @@ const FAIL = 11300;
 
 class Importer {
   
-  private $vdm, $utilities;
+  private $vdm, $output;
   
-  function __construct(VendorDirectoryManager $vdm, SystemUtilities $utilities) {
+  function __construct(VendorDirectoryManager $vdm, Output $output) {
     $this->vdm = $vdm;
-    $this->utilities = $utilities;
+    $this->output = $output;
   }
   
   // TODO: Refactor this.
@@ -24,7 +24,7 @@ class Importer {
     if ($status->isSuccessful()) {
       $this->linkLocations($data_location, $local_location);
     }
-    $this->utilities->out($status->getMessage());
+    $this->output->out($status->getMessage());
     return $status;
   }
   

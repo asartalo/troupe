@@ -1,4 +1,2 @@
 NEXT:
-- Refactor Dependency Creation
-  - Separate the dependency scope
-  - Replace the Source Factory with a DI Container
+- Create a test case for setting _settings

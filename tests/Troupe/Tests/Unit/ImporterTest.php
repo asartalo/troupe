@@ -13,8 +13,8 @@ class ImporterTest extends \Troupe\Tests\TestCase {
     $this->project_dir = 'foo/path';
     $this->VDM = $this->quickMock('Troupe\VendorDirectoryManager');
     $this->dependency = $this->quickMock('Troupe\Dependency\Dependency');
-    $this->utilities = $this->quickMock('Troupe\SystemUtilities',array('out'));
-    $this->importer = new Importer($this->VDM, $this->utilities);
+    $this->output = $this->quickMock('Troupe\Output',array('out'));
+    $this->importer = new Importer($this->VDM, $this->output);
     $this->status = $this->quickMock('Troupe\Status\Status');
   }
   
@@ -87,7 +87,7 @@ class ImporterTest extends \Troupe\Tests\TestCase {
     $this->status->expects($this->once())
       ->method('getMessage')
       ->will($this->returnValue('foo bar'));
-    $this->utilities->expects($this->once())
+    $this->output->expects($this->once())
       ->method('out')
       ->with('foo bar');
     $this->importer->import($this->project_dir, $this->dependency);

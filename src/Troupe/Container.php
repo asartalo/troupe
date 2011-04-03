@@ -39,7 +39,7 @@ class Container extends \Pimple {
 
     $this->TroupeTaskList = function(\Pimple $c) {
       return new Cli\TroupeTasks(
-        $c->SystemUtilities, $c->Manager
+        $c->Output, $c->Manager
       );
     };
 
@@ -48,11 +48,15 @@ class Container extends \Pimple {
         $c->ProjectRootDirectory,
         $c->Dependencies,
         $c->Importer,
-        $c->SystemUtilities,
+        $c->Output,
         $c->VendorDirectoryManager,
         $c->Logger
       );
     };
+    
+    $this->Output = $this->asShared(function (\Pimple $c) {
+      return new Output;
+    });
 
     $this->Logger = function(\Pimple $c) {
       return new Logger;
@@ -124,7 +128,7 @@ class Container extends \Pimple {
     };
 
     $this->Importer = function(\Pimple $c) {
-      return new Importer($c->VendorDirectoryManager, $c->SystemUtilities);
+      return new Importer($c->VendorDirectoryManager, $c->Output);
     };
 
     $this->VendorDirectoryManager = function(\Pimple $c) {

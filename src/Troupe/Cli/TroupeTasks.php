@@ -4,13 +4,14 @@ namespace Troupe\Cli;
 
 use \Troupe\SystemUtilities;
 use \Troupe\Manager;
+use \Troupe\Output;
 
 class TroupeTasks implements Tasks {
 
-  private $controller, $system_utilities, $manager;
+  private $controller, $output, $manager;
   
-  function __construct(SystemUtilities $system_utilities, Manager $manager) {
-    $this->system_utilities = $system_utilities;
+  function __construct(Output $output, Manager $manager) {
+    $this->output = $output;
     $this->manager = $manager;
   }
   
@@ -24,6 +25,10 @@ class TroupeTasks implements Tasks {
   
   function taskAssemble() {
     $this->manager->importDependencies();
+  }
+  
+  function taskList() {
+    $this->manager->outputDependencies();
   }
   
 }

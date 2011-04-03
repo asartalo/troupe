@@ -9,4 +9,5 @@ const STATUS_FAIL      = 10300;
 interface Source {
   function import();
   function getDataDir();
+  function getUrl();
 };
