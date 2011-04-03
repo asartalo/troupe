@@ -1,18 +1,23 @@
 Troupe
 ======
 
-**Troupe** is a tool for declaring and managing application dependencies in PHP.
+**Troupe** is a tool for declaring and managing source code dependencies in PHP. 
+
+With Troupe you can:
+
+- declare dependencies in your source. Mytroupe files documents your dependencies so that collaborators can easily import everything they need to get started.
+- easily import source code from other SCMs. You don't have to worry when your project uses subversion and you need some code that is hosted on github. Simply declare that dependency, and only track the mytroupe file. Your project doesn't even have to use git submodules or svn externals!
+- import source code archives. If a source code is served as a downloadable archive file like zip, targ.gz, Troupe can import them for you as well.
 
 News
 ----
 
-- January 3, 2011 GMT+8 : Importing tar archives is currently buggy
 - Troupe can now download from, git, svn, and zip archives.
 
 Hypothetical Example
 --------------------
 
-Dependency information is stored in mytroupe.php
+Dependency information is stored in a mytroupe file (here we use mytroupe.php)
 
     // mytroupe.php
     return array(
@@ -21,14 +26,17 @@ Dependency information is stored in mytroupe.php
         'alias'   => 'symfony2', // This will be the directory name the source will be renamed to. Defaults to label/name
         'move_to' => 'lib/src', // Defaults to 'vendor_dir' in settings
       ),
+      
       'doctrine' => 'git://github.com/doctrine/doctrine2.git',
+      
+      // Pear import is not yet implemented
       'phpunit' => array(
         'type' => 'pear',
         'channel' => 'pear.phpunit.de',
         'pear_name' => 'phpunit/PHPUnit'
       ),
-      
       // Or 'phpunit' => 'pear://pear.phpunit.de/PHPUnit'
+      
       'minify' => 'http://code.google.com/p/minify/downloads/detail?name=minify_2.1.3.zip',
       
       // This checks the platform or environment where the application runs
@@ -44,7 +52,7 @@ Dependency information is stored in mytroupe.php
 
 Then one can run this in terminal:
 
-   troupe assemble
+    troupe assemble
 
 And voila! Dependencies solved.
 
@@ -59,8 +67,8 @@ Requirements
 Known Issues
 ------------
 
-- Importing tar and tar.gz archives are currently buggy.
-- This code has currently been tested on Linux (Ubuntu) only.
+- This code has currently been tested on Linux (Ubuntu) and Mac OS X only.
+- Troupe will not work for environments that doesn't support creating symbolic links. Windows Vista and Windows 7 seem to support this but Troupe hasn't been tested on those platforms yet.
 
 Help Out
 --------
@@ -68,27 +76,18 @@ Help Out
 Want to help out? Some things the project needs:
 
 - Testing
-  - Run the tests. The project currently lacks an integration test.
+  - Run the tests in different platforms.
   - Test in Windows
 - Feedback
   - How does it work for you?
   - What do you think needs to be done?
 - Improve it!
   - You can fork the code if you like. Please note that the documentation is lacking. I'll get to that, I promise.
-  
+
 
 TODO
 -----
 
-- Declare dependencies through php code
-- Support different sources
-  - subversion - done (must have an svn client installed that can be run in terminal)
-  - git - done (must have a git client installed)
-  - pear
-  - archive source files
-    - tar - buggy
-    - zip - done (uses the PclZip library so we're not dependent on enabling ZipLib)
-    - tar.gz - buggy
-- Declare where a source will be placed (default is vendor dir)
+- Support PEAR sources
 - Declare where in the source tree the interesting part of the code is located
 
