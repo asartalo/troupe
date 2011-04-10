@@ -5,7 +5,7 @@ namespace Troupe\Source;
 use \Troupe\Executor;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
-use \Troupe\VendorDirectoryManager as VDM;
+use \Troupe\VendorDirectory\Manager as VDM;
 
 abstract class CommandlineImport implements Source {
   

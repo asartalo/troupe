@@ -11,7 +11,7 @@ class ImporterTest extends \Troupe\Tests\TestCase {
   
   public function setUp() {
     $this->project_dir = 'foo/path';
-    $this->VDM = $this->quickMock('Troupe\VendorDirectoryManager');
+    $this->VDM = $this->quickMock('Troupe\VendorDirectory\Manager');
     $this->dependency = $this->quickMock('Troupe\Dependency\Dependency');
     $this->output = $this->quickMock('Troupe\Output',array('out'));
     $this->importer = new Importer($this->VDM, $this->output);

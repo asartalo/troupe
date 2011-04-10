@@ -4,17 +4,23 @@ namespace Troupe;
 
 class Settings {
   
-  private $options = array(
-    'vendor_dir' => 'vendor'
-  );
+  private $settings = array();
   
   function __construct(array $options = array()) {
-    $this->options['data_dir'] = realpath(__DIR__ . '/../../data');
-    $this->options = array_merge($this->options, $options);
+    $this->settings = $options;
   }
   
   function get($key) {
-    return $this->options[$key];
+    $val = $this->settings[$key];
+    preg_match_all('/\{([^\}]+)\}/', $val, $matches);
+    $vars = $matches[0];
+    $keys = $matches[1];
+    for ($i = 0, $count = count($vars); $i < $count; $i++) {
+      if (isset($this->settings[$keys[$i]]) && $keys[$i] !== $key) {
+        $val = str_replace($vars[$i], $this->settings[$keys[$i]], $val);
+      }
+    }
+    return $val;
   }
 
 }

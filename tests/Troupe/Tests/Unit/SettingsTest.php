@@ -4,31 +4,40 @@ namespace Troupe\Tests\Unit;
 require_once realpath(__DIR__ . '/../../../bootstrap.php');
 
 use \Troupe\Settings;
+use \Troupe\Tests\TestCase;
 
-class SettingsTest extends \Troupe\Tests\TestCase {
+class SettingsTest extends TestCase {
 
   function setUp() {
-    $options = array(
-    
-    );
-    $this->settings = new Settings($options);
+    $this->settings = new Settings;
   }
   
-  function testDefaultSettings() {
-    $settings = new Settings(array());
-    $this->assertEquals('vendor', $settings->get('vendor_dir'));
+  /**
+   * @dataProvider dataVariableExpansion
+   */
+  function testVariableExpansion($options, $key, $expected) {
+    $settings = new Settings($options);
+    $this->assertEquals($expected, $settings->get($key));
   }
   
-  function testSettingValues() {
-    $settings = new Settings(array('vendor_dir' => 'lib/src'));
-    $this->assertEquals('lib/src', $settings->get('vendor_dir'));
-  }
-  
-  function testDefaultDataDirectory() {
-    $settings = new Settings();
-    $this->assertEquals(
-      realpath(__DIR__ . '/../../../../data'),
-      $settings->get('data_dir')
+  function dataVariableExpansion() {
+    return array(
+      array(
+        array('foo' => 'FFF', 'bar' => '{foo}/BAR'), 'bar', 'FFF/BAR'
+      ),
+      array(
+        array('foo' => 'FOO', 'bar' => 'BAR', 'baz' => '{foo}{bar}'),
+        'baz', 'FOOBAR'
+      ),
+      array(
+        array('foo' => '{unknown}/bar'), 'foo', '{unknown}/bar'
+      ),
+      array(
+        array('foo' => '{{strange_text}}'), 'foo', '{{strange_text}}'
+      ),
+      array(
+        array('foo' => '{foo}F'), 'foo', '{foo}F'
+      ),
     );
   }
 

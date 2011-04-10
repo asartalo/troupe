@@ -14,7 +14,7 @@ class SvnTest extends \Troupe\Tests\TestCase {
     $this->executor  = $this->getMock('Troupe\Executor');
     $this->url = 'http://svn.source.com/example';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager');
+    $this->vdm = $this->quickMock('Troupe\VendorDirectory\Manager');
     $this->svn_source = new Svn($this->url, $this->vdm, $this->executor, $this->data_dir);
   }
 

@@ -7,7 +7,7 @@ use \Troupe\Manager;
 use \Troupe\SystemUtilities;
 use \Troupe\Dependency\Dependency;
 
-class StubVDM extends \Troupe\VendorDirectoryManager {
+class StubVDM extends \Troupe\VendorDirectory\Manager {
 
   function __construct() {}
   

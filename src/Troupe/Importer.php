@@ -4,6 +4,7 @@ namespace Troupe;
 
 use \Troupe\Dependency\Dependency;
 use \Troupe\Status\Failure;
+use \Troupe\VendorDirectory\Manager as VDM;
 
 const FAIL = 11300;
 
@@ -11,7 +12,7 @@ class Importer {
   
   private $vdm, $output;
   
-  function __construct(VendorDirectoryManager $vdm, Output $output) {
+  function __construct(VDM $vdm, Output $output) {
     $this->vdm = $vdm;
     $this->output = $output;
   }

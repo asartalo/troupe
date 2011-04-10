@@ -14,7 +14,7 @@ class GitTest extends \Troupe\Tests\TestCase {
     $this->executor  = $this->getMock('Troupe\Executor');
     $this->url = 'http://git.source.com/example';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager', array('isDataImported', 'importSuccess'));
+    $this->vdm = $this->quickMock('Troupe\VendorDirectory\Manager', array('isDataImported', 'importSuccess'));
     $this->git_source = new Git($this->url, $this->vdm, $this->executor, $this->data_dir);
   }
   

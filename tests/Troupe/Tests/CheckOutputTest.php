@@ -27,5 +27,11 @@ class CheckOutputTest extends \PHPUnit_Framework_TestCase {
     $this->output->out('Baz');
     $this->assertEquals("Foo\nBar\nBaz\n", $this->output->getOutput());
   }
+  
+  function testClearingOutput() {
+    $this->output->out('Foo');
+    $this->output->clearOutput();
+    $this->assertEquals('', $this->output->getOutput());
+  }
 
 }

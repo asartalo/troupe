@@ -1,12 +1,13 @@
 <?php
 
-namespace Troupe;
+namespace Troupe\VendorDirectory;
 
 use \Troupe\Settings;
 use \Troupe\SystemUtilities;
 use \Troupe\DataStore;
 
-class VendorDirectoryManager {
+// This needs refactoring or better tests
+class Manager {
   
   private $utilities, $data_store, $settings;
   
@@ -32,6 +33,7 @@ class VendorDirectoryManager {
   }
   
   private function symlink($target, $link) {
+    //echo "\n target: $target\n link: $link\n";
     $this->utilities->symlink($target, $link);
   }
   

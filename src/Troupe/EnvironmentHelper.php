@@ -4,12 +4,10 @@ namespace Troupe;
 
 class EnvironmentHelper {
   
-  private $cli, $env, $cwd, $args, $tasklists;
+  private $cli, $args, $tasklists;
   
-  function __construct(\Troupe\Cli\Controller $cli, array $env, $cwd, array $args, array $tasklists) {
+  function __construct(\Troupe\Cli\Controller $cli, array $args, array $tasklists) {
     $this->cli = $cli;
-    $this->env = $env;
-    $this->cwd = $cwd;
     $this->args = $args;
     $this->tasklists = $tasklists;
   }

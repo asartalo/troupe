@@ -17,7 +17,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     $this->data_dir = 'a/path/to/a/directory';
     $this->cibo = $this->quickMock('Cibo');
     $this->vdm = $this->quickMock(
-      'Troupe\VendorDirectoryManager',
+      'Troupe\VendorDirectory\Manager',
       array('isDataImported', 'importSuccess')
     );
     $this->zip_source = new Archive(

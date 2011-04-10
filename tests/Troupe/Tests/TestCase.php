@@ -16,6 +16,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
     return $full_path;
   }
   
+  protected function createTestDir($path) {
+    mkdir($this->getTestDataDir() . "/$path");
+  }
+  
   private function recursiveDelete($directory, $this_too = true) {
     if (file_exists($directory) && is_dir($directory)) {
       foreach (scandir($directory) as $value) {
@@ -23,7 +27,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
           $value = $directory . "/" . $value;
           if (is_dir($value)) {
             $this->recursiveDelete($value);
-          } elseif (is_file($value)) {
+          } else {
             @unlink($value);
           }
         }

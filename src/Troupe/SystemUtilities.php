@@ -47,6 +47,9 @@ class SystemUtilities {
   }
   
   function symlink($target, $link) {
+    if (!file_exists(realpath(dirname($link)))) {
+      throw new Exception( "Unable to link '$link' to '$target'. Parent directory for '$link' does not exist.");
+    }
     symlink($target, $link);
   }
   

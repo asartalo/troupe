@@ -3,7 +3,7 @@
 namespace Troupe\Dependency;
 
 use \Troupe\Settings;
-use \Troupe\VendorDirectoryManager as VDM;
+use \Troupe\VendorDirectory\Manager as VDM;
 use \Troupe\Executor;
 use \Troupe\SystemUtilities;
 

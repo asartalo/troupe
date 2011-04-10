@@ -68,7 +68,7 @@ Known Issues
 ------------
 
 - This code has currently been tested on Linux (Ubuntu) and Mac OS X only.
-- Troupe will not work for environments that doesn't support creating symbolic links. Windows Vista and Windows 7 seem to support this but Troupe hasn't been tested on those platforms yet.
+- Troupe will not work for environments that do not support symbolic links. Windows Vista and Windows 7 seem to support this but Troupe hasn't been tested on those platforms yet.
 
 Help Out
 --------

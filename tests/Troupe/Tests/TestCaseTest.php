@@ -64,12 +64,21 @@ class TestCaseTest extends TestCase {
     );
   }
   
+  function testCreatingTestDirectory() {
+    $this->createTestDir('foo');
+    $this->assertFileExists($dir = $this->data_dir . '/foo');
+    $this->assertTrue(is_dir($dir));
+  }
+  
   function testClearingTestDirectory() {
     $this->createTestFile('foo.txt', 'Foo');
     $this->createTestFile('bar.txt', 'Bar');
+    $this->createTestDir('foo');
+    $this->createTestFile('foo/bar.txt', 'Bar2');
     $this->clearTestDataDir();
     $this->assertFileNotExists($this->data_dir . '/foo.txt');
     $this->assertFileNotExists($this->data_dir . '/bar.txt');
+    $this->assertFileNotExists($this->data_dir . '/foo/bar.txt');
   }
   
   function testGettingTestFilePath() {

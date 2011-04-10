@@ -1,14 +1,14 @@
 <?php
-namespace Troupe\Tests\Unit;
+namespace Troupe\Tests\Unit\VendorDirectory;
 
-require_once realpath(__DIR__ . '/../../../bootstrap.php');
+require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
-use \Troupe\VendorDirectoryManager;
+use \Troupe\VendorDirectory\Manager as VendorDirectoryManager;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 use \Troupe\Settings;
 
-class VendorDirectoryManagerTest extends \Troupe\Tests\TestCase {
+class ManagerTest extends \Troupe\Tests\TestCase {
   
   function setUp() {
     $this->utilities = $this->quickMock(

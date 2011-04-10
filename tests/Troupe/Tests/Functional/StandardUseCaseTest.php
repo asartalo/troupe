@@ -1,22 +1,62 @@
 <?php
 
 namespace Troupe\Tests\Functional;
-use Troupe\Container;
 
 require_once realpath(__DIR__ . '/../../../bootstrap.php');
 require_once realpath(__DIR__ . '/../ArgvParser.php');
 require_once realpath(__DIR__ . '/../CheckOutput.php');
+require_once realpath(__DIR__ . '/../RobotSource.php');
+
+use Troupe\Container;
+use Troupe\Tests\RobotSource;
+
+class TestContainer extends Container {
+  
+  function dependencyContainerSetup($dc) {
+    $dc->Source = function(\Pimple $c) {
+      return \Troupe\Tests\RobotSource::getInstance($c->options['url']);
+    };
+  }
+}
 
 class StandardUseCaseTest extends \Troupe\Tests\TestCase {
   
   function setUp() {
-    $this->data_dir = realpath(__DIR__ . '/../../../../data');
-    $this->project_dir = realpath(__DIR__ . '/../../../fixtures/test_project');
+    $this->project_dir = $this->getTestDataDir() . '/test_project';
     $this->argv_parser = new \Troupe\Tests\ArgvParser('foo.php');
     $this->output = new \Troupe\Tests\CheckOutput;
-    $this->container = new Container(
-      array(), $this->project_dir, array()
+    $this->container = new TestContainer(
+      $this->project_dir, array()
     );
+    $this->clearTestDataDir();
+    $this->setupProjectDir();
+  }
+  
+  private function setupProjectDir() {
+    $this->recursive_copy(
+      $this->getFixturesDir() . '/test_project',
+      $this->getTestDataDir() . '/test_project'
+    );
+  }
+  
+  private function recursive_copy($src,$dst) { 
+    $dir = opendir($src); 
+    @mkdir($dst); 
+    while(false !== ( $file = readdir($dir)) ) { 
+      if (( $file != '.' ) && ( $file != '..' )) { 
+        if ( is_dir($src . '/' . $file) ) { 
+          $this->recursive_copy($src . '/' . $file,$dst . '/' . $file); 
+        } 
+        else { 
+          copy($src . '/' . $file,$dst . '/' . $file); 
+        } 
+      } 
+    } 
+    closedir($dir); 
+} 
+  
+  function tearDown() {
+    $this->clearTestDataDir();
   }
   
   function testBasicIntegration() {
@@ -25,8 +65,8 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
   
   function testListDependencies() {
     $commands = $this->argv_parser->parse('list');
-    $this->container = new Container(
-      array(), $this->project_dir, $commands
+    $this->container = new TestContainer(
+      $this->project_dir, $commands
     );
     $this->container->Output = $this->output;
     $this->container->EnvironmentHelper->run();
@@ -55,6 +95,40 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
     $this->assertEquals(
       $this->project_dir . '/src',
       $this->container->Manager->getVendorDirectory()
+    );
+  }
+  
+  function testAssemble() {
+    $commands = $this->argv_parser->parse('assemble');
+    $this->container = new TestContainer(
+      $this->project_dir, $commands
+    );
+    $this->container->Output = $this->output;
+    RobotSource::setSuccessStatus(
+      'git://some.git.site/iko/iko.git'
+    );
+    $iko = RobotSource::getInstance('git://some.git.site/iko/iko.git');
+    RobotSource::setSuccessStatus(
+      'http://svn.barsite.com/blon_repo'
+    );
+    $this->container->EnvironmentHelper->run();
+    $this->assertContains(
+      "Importing: iko\n" .
+      "SUCCESS: Robot says 'git://some.git.site/iko/iko.git' import is successful.",
+      $this->output->getOutput(),
+      $this->output->getOutput()
+    );
+    $this->assertContains(
+      "Importing: blon\n" .
+      "SUCCESS: Robot says 'http://svn.barsite.com/blon_repo' import is successful.",
+      $this->output->getOutput(),
+      $this->output->getOutput()
+    );
+    $this->assertContains(
+      "Importing: pcell\n" .
+      "FAIL: Robot says 'http://www.somewhere.org/files/pcell.zip' import failed.",
+      $this->output->getOutput(),
+      $this->output->getOutput()
     );
   }
   

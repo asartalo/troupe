@@ -14,4 +14,8 @@ class CheckOutput extends \Troupe\Output {
     return $this->output;
   }
   
+  function clearOutput() {
+    $this->output = '';
+  }
+  
 }

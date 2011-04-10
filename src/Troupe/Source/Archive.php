@@ -4,7 +4,7 @@ namespace Troupe\Source;
 
 use \Troupe\Expander\Expander;
 use \Troupe\SystemUtilities;
-use \Troupe\VendorDirectoryManager as VDM;
+use \Troupe\VendorDirectory\Manager as VDM;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 use \Cibo;

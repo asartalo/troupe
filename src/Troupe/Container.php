@@ -4,30 +4,31 @@ namespace Troupe;
 
 class Container extends \Pimple {
   
-  function __construct($env, $cwd, $args) {
-    $this->env = $env;
-    $this->cwd = $cwd;
+  function __construct($project_root_dir, $args) {
+    $this->project_root_dir = $project_root_dir;
     $this->args = $args;
     $this->defineGraph();
   }
   
   function dependencyContainerEntrance(
-    $name, $cwd, $settings, $options, $vdm, $executor, $system_utilities,
+    $name, $project_root_dir, $settings, $options, $vdm, $executor, $system_utilities,
     $data_directory
   ) {
-    return new Dependency\Container(
-      $name, $cwd, $settings, $options,
+    $dependency_container = new Dependency\Container(
+      $name, $project_root_dir, $settings, $options,
       $vdm, $executor, $system_utilities,
       $data_directory
     );
+    $this->dependencyContainerSetup($dependency_container);
+    return $dependency_container;
   }
+  
+  function dependencyContainerSetup($dependency_container) {}
   
   private function defineGraph() {
     $this->EnvironmentHelper = function(\Pimple $c) {
       return new EnvironmentHelper(
         $c->CliController,
-        $c->env,
-        $c->cwd,
         $c->args,
         $c->TaskLists
       );
@@ -63,7 +64,7 @@ class Container extends \Pimple {
     };
 
     $this->ProjectRootDirectory = function(\Pimple $c) {
-      return $c->cwd;
+      return $c->project_root_dir;
     };
 
     $this->Dependencies = function(\Pimple $c) {
@@ -71,7 +72,7 @@ class Container extends \Pimple {
       // Enter scope!!!
       foreach ($c->TroupeList as $name => $options) {
         $dependencies[] = $c->dependencyContainerEntrance(
-          $name, $c->cwd, $c->Settings, $options,
+          $name, $c->project_root_dir, $c->Settings, $options,
           $c->VendorDirectoryManager, $c->Executor, $c->SystemUtilities,
           $c->data_directory
         )->Dependency;
@@ -88,8 +89,18 @@ class Container extends \Pimple {
     };
 
     $this->Settings = $this->asShared(function(\Pimple $c) {
-      return new Settings($c->RawSettingsData);
+      return new Settings(
+        array_merge($c->DefaultSettings, $c->RawSettingsData)
+      );
     });
+    
+    $this->DefaultSettingsValues = function (\Pimple $c) {
+      return new DefaultSettingsValues($c->ProjectRootDirectory);
+    };
+    
+    $this->DefaultSettings = function (\Pimple $c) {
+      return $c->DefaultSettingsValues->getValues();
+    };
 
     $this->RawSettingsData = function(\Pimple $c) {
       return $c->Reader->getSettings();
@@ -132,7 +143,7 @@ class Container extends \Pimple {
     };
 
     $this->VendorDirectoryManager = function(\Pimple $c) {
-      return new VendorDirectoryManager(
+      return new VendorDirectory\Manager(
         $c->SystemUtilities, $c->DataStore, $c->Settings
       );
     };
@@ -155,7 +166,7 @@ class Container extends \Pimple {
 
     $this->CliController = function(\Pimple $c) {
       return new Cli\Controller(
-        $c->CliInterpreter, $c->CliExecutor, $c->cwd
+        $c->CliInterpreter, $c->CliExecutor, $c->project_root_dir
       );
     };
 

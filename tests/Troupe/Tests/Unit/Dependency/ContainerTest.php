@@ -7,13 +7,15 @@ use \Troupe\Source\Source;
 use \Troupe\Dependency\Container;
 use \Troupe\Dependency\Dependency;
 use \Troupe\Settings;
+use \Troupe\DefaultSettingsValues;
 
 class ContainerTest extends \Troupe\Tests\TestCase {
 
   function setUp() {
     $this->project_dir = 'a/path';
-    $this->settings = new Settings;
-    $this->vdm = $this->quickMock('Troupe\VendorDirectoryManager');
+    $defaults = new DefaultSettingsValues($this->project_dir);
+    $this->settings = new Settings($defaults->getValues());
+    $this->vdm = $this->quickMock('Troupe\VendorDirectory\Manager');
     $this->executor = $this->quickMock('Troupe\Executor');
     $this->system_utilities = $this->quickMock('Troupe\SystemUtilities');
     $this->data_directory = 'data/dir';

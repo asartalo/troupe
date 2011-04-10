@@ -4,7 +4,7 @@ namespace Troupe\Source;
 
 use \Troupe\Source\Source;
 use \Troupe\SystemUtilities;
-use \Troupe\VendorDirectoryManager as VDM;
+use \Troupe\VendorDirectory\Manager as VDM;
 
 abstract class AbstractSource implements Source {
   

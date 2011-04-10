@@ -9,9 +9,7 @@ $classLoader = new SplClassLoader('Cibo', $path . '/Cibo/src');
 $classLoader->register();
 $classLoader = new SplClassLoader('Pimple', $path . '/Pimple/lib');
 $classLoader->register();
-$container = new \Troupe\Container(
-  $_ENV, getcwd(), $argv
-);
+$container = new \Troupe\Container(getcwd(), $argv);
 $container->EnvironmentHelper->run();
 ?>
 

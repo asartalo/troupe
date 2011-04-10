@@ -2,7 +2,7 @@
 
 namespace Troupe;
 
-use \Troupe\VendorDirectoryManager as VDM;
+use \Troupe\VendorDirectory\Manager as VDM;
 
 class Manager {
   
