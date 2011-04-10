@@ -11,18 +11,10 @@ class DataStoreTest extends \Troupe\Tests\TestCase {
     $this->clearTestDataDir();
     $this->data_directory = $this->getTestDataDir();
     $this->data_file = $this->data_directory . '/troupe.dat';
-    $this->delete($this->data_file);
     $this->data_store = new DataStore($this->data_directory);
   }
   
-  private function delete($file) {
-    if (file_exists($file)) {
-      unlink($file);
-    }
-  }
-  
   function tearDown() {
-    $this->delete($this->data_file);
     $this->clearTestDataDir();
   }
   
