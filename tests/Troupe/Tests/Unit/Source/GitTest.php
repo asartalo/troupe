@@ -36,7 +36,7 @@ class GitTest extends \Troupe\Tests\TestCase {
     $this->vdmIsDataImported(false);
     $this->executor->expects($this->once())
       ->method('system')
-      ->with("git clone '{$this->url}' '{$this->data_dir}/$folder_name'");
+      ->with("git clone --recursive '{$this->url}' '{$this->data_dir}/$folder_name'");
     $this->git_source->import();
   }
   
@@ -62,7 +62,31 @@ class GitTest extends \Troupe\Tests\TestCase {
   function checkOutIsSuccessful() {
     $this->executor->expects($this->once())
       ->method('system')
-      ->will($this->returnValue('Initialized empty Git repository in foo/bar.'));
+      ->will(
+        $this->returnValue('Initialized empty Git repository in foo/bar.')
+      );
+  }
+  
+  function checkOutIsSuccessfulForGitRepositoriesWithSubmodules() {
+    $this->executor->expects($this->once())
+      ->method('system')
+      ->will(
+        $this->returnValue(
+          "Submodule path 'submodules/baz': checked out " .
+          "'a46c6180f96647fdd66e2c8f2771d61ecebe6a3f'"
+        )
+      );
+  }
+  
+  function testImportReturnsOkayStatusMessageIfSuccessfulForSubmoduledRepos() {
+    $folder_name = md5($this->url);
+    $this->vdmIsDataImported(false);
+    $status = new Success(
+      \Troupe\Source\STATUS_OK, "SUCCESS: Imported {$this->url}.",
+      "{$this->data_dir}/$folder_name"
+    );
+    $this->checkOutIsSuccessfulForGitRepositoriesWithSubmodules();
+    $this->assertEquals($status, $this->git_source->import());
   }
   
   function testImportTellsVdmThatTheDataHasBeenImportedSuccessfuly() {
