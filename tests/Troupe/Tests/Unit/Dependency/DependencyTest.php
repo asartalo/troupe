@@ -19,20 +19,36 @@ class DependencyTest extends \Troupe\Tests\TestCase {
     );
   }
   
-  function testLoadCallsSourceImport() {
+  function testImportCallsSourceImport() {
     $this->source->expects($this->once())
       ->method('import');
-    $this->dependency->load();
+    $this->dependency->import();
   }
   
-  function testLoadReturnsValueFromImport() {
+  function testImportReturnsValueFromSourceImport() {
     $status = new Success(
       \Troupe\Source\STATUS_OK, "Imported.", 'a/path/to/a/library'
     );
     $this->source->expects($this->once())
       ->method('import')
       ->will($this->returnValue($status));
-    $this->assertEquals($status, $this->dependency->load());
+    $this->assertEquals($status, $this->dependency->import());
+  }
+  
+  function testUpdateCallsSourceUpdate() {
+    $this->source->expects($this->once())
+      ->method('update');
+    $this->dependency->update();
+  }
+  
+  function testUpdateReturnsValueFromSourceUpdate() {
+    $status = new Success(
+      \Troupe\Source\STATUS_OK, "Updated.", 'a/path/to/a/library'
+    );
+    $this->source->expects($this->once())
+      ->method('update')
+      ->will($this->returnValue($status));
+    $this->assertEquals($status, $this->dependency->update());
   }
   
   function testLocalLocation() {

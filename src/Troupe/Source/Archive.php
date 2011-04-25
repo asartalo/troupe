@@ -9,8 +9,12 @@ use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 use \Cibo;
 
-// TODO: Refactor downloading to a separate class
-// TODO: Or generalize as an Archive file and just get expander
+/**
+ * @todo Refactor downloading to a separate class
+ *       or generalize as an Archive file and just get expander
+ * @todo see if it is worthwile to create a separate logic for update()
+ *       instead of just using import()
+ */
 class Archive extends AbstractSource {
   
   protected $expander, $system_utilities, $vdm, $cibo;
@@ -36,6 +40,10 @@ class Archive extends AbstractSource {
       "SUCCESS: {$this->url} has already been imported.",
       $this->getDataDir()
     );
+  }
+  
+  function update() {
+    return $this->import();
   }
   
   private function download() {

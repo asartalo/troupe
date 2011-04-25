@@ -7,6 +7,9 @@ use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
 use \Troupe\VendorDirectory\Manager as VDM;
 
+/**
+ * @todo Refactor this
+ */
 abstract class CommandlineImport implements Source {
   
   protected $executor, $vdm;
@@ -38,16 +41,34 @@ abstract class CommandlineImport implements Source {
     );
   }
   
+  function update() {
+    if (!$this->vdm->isDataImported($this->url)) {
+      return $this->import();
+    }
+    $troupe_lib_path = $this->getDataDir();
+    $output = $this->executor->system(
+      $this->getCliUpdateCommand($this->url, $troupe_lib_path)
+    );
+    if ($this->checkIfUpdateSuccess($output)) {
+      return new Success(
+        \Troupe\Source\STATUS_OK, 
+        "SUCCESS: Updated {$this->url}.", $troupe_lib_path
+      );
+    }
+    return new Failure(
+      \Troupe\Source\STATUS_FAIL, "FAIL: Unable to update {$this->url}."
+    );
+  }
+  
   private function checkOut($troupe_lib_path) {
     $output = $this->executor->system(
-      $this->getCliCommand($this->url, $troupe_lib_path)
+      $this->getCliCheckOutCommand($this->url, $troupe_lib_path)
     );
-    if ($this->getCheckIfSuccess($output)) {
+    if ($this->checkIfCheckoutSuccess($output)) {
       $this->vdm->importSuccess($this->url);
       return new Success(
         \Troupe\Source\STATUS_OK, 
-        "SUCCESS: Imported {$this->url}.",
-        $troupe_lib_path
+        "SUCCESS: Imported {$this->url}.", $troupe_lib_path
       );
     }
     return new Failure(
@@ -55,8 +76,12 @@ abstract class CommandlineImport implements Source {
     );
   }
   
-  abstract function getCliCommand($url, $troupe_lib_path);
+  abstract function getCliCheckOutCommand($url, $troupe_lib_path);
   
-  abstract function getCheckIfSuccess($last_line);
+  abstract function checkIfCheckoutSuccess($last_line);
+  
+  abstract function getCliUpdateCommand($url, $troupe_lib_path);
+  
+  abstract function checkIfUpdateSuccess($last_line);
   
 }

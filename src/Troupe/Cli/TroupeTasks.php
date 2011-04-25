@@ -31,4 +31,8 @@ class TroupeTasks implements Tasks {
     $this->manager->outputDependencies();
   }
   
+  function taskUpdate() {
+    $this->manager->updateDependencies();
+  }
+  
 }

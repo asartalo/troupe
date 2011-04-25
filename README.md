@@ -56,6 +56,15 @@ Then one can run this in terminal:
 
 And voila! Dependencies solved.
 
+To update your sources, execute:
+
+    troupe update
+    
+To list all dependencies:
+
+    troupe list
+
+
 Requirements
 ------------
 

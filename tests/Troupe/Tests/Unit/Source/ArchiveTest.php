@@ -132,4 +132,22 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     $this->zip_source->import();
   }
   
+  function testUpdateDoesNotDownloadFileWhenItHasBeenImportedAlready() {
+    $this->vdmIsDataImported(true);
+    $this->cibo->expects($this->never())
+      ->method('download');
+    $this->zip_source->update();
+  }
+  
+  function testUpdateCallsImportWhenItHasntBeenDownloadedYet() {
+    $this->vdmIsDataImported(false);
+    $this->ciboDownload(true);
+    $status = new Success(
+      \Troupe\Source\STATUS_OK,
+      "SUCCESS: Imported {$this->url}.",
+      $this->data_dir . '/' . md5($this->url)
+    );
+    $this->assertEquals($status, $this->zip_source->update());
+  }
+  
 }

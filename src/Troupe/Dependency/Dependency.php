@@ -4,7 +4,7 @@ namespace Troupe\Dependency;
 
 use \Troupe\Source\Source;
 
-class Dependency {
+class Dependency implements DependencyInterface {
   
   private $name, $source, $local_dir, $alias;
   
@@ -24,8 +24,12 @@ class Dependency {
       ($this->alias ? $this->alias : $this->name);
   }
   
-  function load() {
+  function import() {
     return $this->source->import();
+  }
+  
+  function update() {
+    return $this->source->update();
   }
   
   function getSource() {

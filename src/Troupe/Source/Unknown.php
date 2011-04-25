@@ -8,7 +8,13 @@ class Unknown extends AbstractSource {
 
   function import() {
     return new Failure(
-      \Troupe\Source\STATUS_FAIL, "FAIL: Unknown source."
+      \Troupe\Source\STATUS_FAIL, "FAIL: Attempted to import unknown source."
+    );
+  }
+  
+  function update() {
+    return new Failure(
+      \Troupe\Source\STATUS_FAIL, "FAIL: Attempted to update unknown source."
     );
   }
 

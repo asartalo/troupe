@@ -8,7 +8,14 @@ class RobotSource implements \Troupe\Source\Source {
   
   private static
     $instances = array(),
-    $import_status = array();
+    $import_status = array(),
+    $status_msgs = array(
+      'import_success' => "SUCCESS: Robot says '%s' import is successful.",
+      'import_failure' => "FAIL: Robot says '%s' import failed.",
+      'update_success' => "SUCCESS: Robot says '%s' update is successful.",
+      'update_failure' => "FAIL: Robot says '%s' update failed.",
+    );
+    
   private $url;
   
   static function getInstance($url) {
@@ -20,32 +27,58 @@ class RobotSource implements \Troupe\Source\Source {
   
   private function __construct($url) {
     $this->url = $url;
-    self::createFailureStatus($url);
+    self::createFailureStatus($url, 'import_failure');
   }
   
-  static function setSuccessStatus($url) {
-    self::$import_status[$url] = new Success(
-      \Troupe\Source\STATUS_OK,
-      "SUCCESS: Robot says '$url' import is successful."
+  static function setImportSuccessStatus($url) {
+    self::createSuccessStatus($url, 'import_success');
+  }
+  
+  static function setImportFailureStatus($url) {
+    self::createFailureStatus($url, 'import_failure');
+    self::removeDataDir($url);
+  }
+  
+  static function setUpdateSuccessStatus($url) {
+    self::createSuccessStatus($url, 'update_success');
+  }
+  
+  static function setUpdateFailureStatus($url) {
+    self::createFailureStatus($url, 'update_failure');
+    self::removeDataDir($url);
+  }
+  
+  private static function createSuccessStatus($url, $msg_template) {
+    self::createStatus(
+      'Success', \Troupe\Source\STATUS_OK, $url, $msg_template
     );
     mkdir(self::getInstance($url)->getDataDir());
   }
   
-  static function setFailureStatus($url) {
-    self::createFailureStatus($url);
+  private static function createFailureStatus($url, $msg_template) {
+    self::createStatus(
+      'Failure', \Troupe\Source\STATUS_FAIL, $url, $msg_template
+    );
+  }
+  
+  private static function createStatus($type, $status_code, $url, $msg_template) {
+    $type = "Troupe\Status\\$type";
+    self::$import_status[$url] = new $type(
+      $status_code, sprintf(self::$status_msgs[$msg_template], $url)
+    );
+  }
+  
+  private static function removeDataDir($url) {
     if (file_exists($data_dir = self::getInstance($url)->getDataDir())) {
       rmdir($data_dir);
     }
   }
   
-  static function createFailureStatus($url) {
-    self::$import_status[$url] = new Failure(
-      \Troupe\Source\STATUS_FAIL,
-      "FAIL: Robot says '$url' import failed."
-    );
+  function import() {
+    return self::$import_status[$this->url];
   }
   
-  function import() {
+  function update() {
     return self::$import_status[$this->url];
   }
   

@@ -18,35 +18,58 @@ class SvnTest extends \Troupe\Tests\TestCase {
     $this->svn_source = new Svn($this->url, $this->vdm, $this->executor, $this->data_dir);
   }
 
-  function testImport() {
+  function testGetCliCheckOutCommand() {
     $folder_name = md5($this->url);
-    $this->executor->expects($this->once())
-      ->method('system')
-      ->with("svn co '{$this->url}' '{$this->data_dir}/$folder_name'");
-    $this->svn_source->import();
+    $this->assertEquals(
+      "svn co '{$this->url}' '{$this->data_dir}/$folder_name'",
+      $this->svn_source->getCliCheckOutCommand($this->url, "{$this->data_dir}/$folder_name")
+    );
   }
   
-  function testImportReturnsOkayStatusMessageIfSuccessful() {
-    $folder_name = md5($this->url);
-    $status = new Success(
-      \Troupe\Source\STATUS_OK, "SUCCESS: Imported {$this->url}.",
-      "{$this->data_dir}/$folder_name"
+  function testCheckIfCheckoutSuccessIsOkForCorrectMessage() {
+    $this->assertTrue(
+      $this->svn_source->checkIfCheckoutSuccess(
+        'Checked out revision 3.'
+      )
     );
-    $this->executor->expects($this->once())
-      ->method('system')
-      ->will($this->returnValue('Checked out revision 3.'));
-    $this->assertEquals($status, $this->svn_source->import());
   }
   
-  function testImportReturnsFailStatusMessageIfNotSuccessful() {
-    $folder_name = md5($this->url);
-    $status = new Failure(
-      \Troupe\Source\STATUS_FAIL, "FAIL: Unable to import {$this->url}."
+  function testCheckIfCheckoutSuccessIsNotOkForEverythingElse() {
+    $this->assertFalse(
+      $this->svn_source->checkIfCheckoutSuccess('Foo')
     );
-    $this->executor->expects($this->once())
-      ->method('system')
-      ->will($this->returnValue('Foo.'));
-    $this->assertEquals($status, $this->svn_source->import());
   }
-
+  
+  function testGetCliUpdateCommand() {
+    $folder_name = md5($this->url);
+    $this->assertEquals(
+      "svn update '{$this->data_dir}/$folder_name'",
+      $this->svn_source->getCliUpdateCommand($this->url, "{$this->data_dir}/$folder_name")
+    );
+  }
+  
+  /**
+   * @dataProvider dataCheckIfUpdateSuccessIsOkForUpdatedRepo
+   */
+  function testCheckIfUpdateSuccessIsOkForUpdatedRepo($test_string) {
+    $this->assertTrue(
+      $this->svn_source->checkIfUpdateSuccess(
+        $test_string
+      )
+    );
+  }
+  
+  function dataCheckIfUpdateSuccessIsOkForUpdatedRepo() {
+    return array(
+      array('At revision 305.'),
+      array('Updated to revision 305.'),
+    );
+  }
+  
+  function testCheckIfUpdateSuccessIsNotOkForFailure() {
+    $this->assertFalse(
+      $this->svn_source->checkIfUpdateSuccess('Foo')
+    );
+  }
+  
 }

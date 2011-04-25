@@ -53,7 +53,7 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
       } 
     } 
     closedir($dir); 
-} 
+  } 
   
   function tearDown() {
     $this->clearTestDataDir();
@@ -104,11 +104,11 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
       $this->project_dir, $commands
     );
     $this->container->Output = $this->output;
-    RobotSource::setSuccessStatus(
+    RobotSource::setImportSuccessStatus(
       'git://some.git.site/iko/iko.git'
     );
     $iko = RobotSource::getInstance('git://some.git.site/iko/iko.git');
-    RobotSource::setSuccessStatus(
+    RobotSource::setImportSuccessStatus(
       'http://svn.barsite.com/blon_repo'
     );
     $this->container->EnvironmentHelper->run();
@@ -127,6 +127,42 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
     $this->assertContains(
       "Importing: pcell\n" .
       "FAIL: Robot says 'http://www.somewhere.org/files/pcell.zip' import failed.",
+      $this->output->getOutput(),
+      $this->output->getOutput()
+    );
+  }
+  
+  function testUpdatingTroupe() {
+    $commands = $this->argv_parser->parse('update');
+    $this->container = new TestContainer(
+      $this->project_dir, $commands
+    );
+    $this->container->Output = $this->output;
+    RobotSource::setUpdateSuccessStatus(
+      'git://some.git.site/iko/iko.git'
+    );
+    RobotSource::setUpdateSuccessStatus(
+      'http://svn.barsite.com/blon_repo'
+    );
+    RobotSource::setUpdateFailureStatus(
+      'http://www.somewhere.org/files/pcell.zip'
+    );
+    $this->container->EnvironmentHelper->run();
+    $this->assertContains(
+      "Updating: iko\n" .
+      "SUCCESS: Robot says 'git://some.git.site/iko/iko.git' update is successful.",
+      $this->output->getOutput(),
+      $this->output->getOutput()
+    );
+    $this->assertContains(
+      "Updating: blon\n" .
+      "SUCCESS: Robot says 'http://svn.barsite.com/blon_repo' update is successful.",
+      $this->output->getOutput(),
+      $this->output->getOutput()
+    );
+    $this->assertContains(
+      "Updating: pcell\n" .
+      "FAIL: Robot says 'http://www.somewhere.org/files/pcell.zip' update failed.",
       $this->output->getOutput(),
       $this->output->getOutput()
     );

@@ -47,6 +47,18 @@ class Manager {
     }
   }
   
+  function updateDependencies() {
+    foreach ($this->dependencies as $dependency) {
+      $this->output->out(
+        "\n==========\nUpdating: {$dependency->getName()}"
+      );
+      $this->logger->log(
+        'update_results',
+        $this->importer->update($this->vdm->getVendorDir(), $dependency)
+      );
+    }
+  }
+  
   function outputDependencies() {
     foreach ($this->dependencies as $dependency) {
       $this->output->out($dependency);

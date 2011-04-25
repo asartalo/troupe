@@ -6,34 +6,63 @@ require_once realpath(__DIR__ . '/../../../bootstrap.php');
 use \Troupe\Importer;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
+use \Troupe\Dependency\DependencyInterface;
+
+class StubDependency implements \Troupe\Dependency\DependencyInterface {
+  
+  private $status,
+    $data_location = 'a/path/to/the/dependency', 
+    $local_location = 'lib/path/my_dependency';
+  
+  function __construct(\Troupe\Status\Status $status) {
+    $this->status = $status;
+  }
+  
+  function import() {
+    return $this->status;
+  }
+  
+  function update() {
+    return $this->status;
+  }
+  
+  function setLocalLocation($location) {
+    $this->local_location = $location;
+  }
+  
+  function getLocalLocation() {
+    return $this->local_location;
+  }
+  
+  function setDataLocation($location) {
+    $this->data_location = $location;
+  }
+  
+  function getDataLocation() {
+    return $this->data_location;
+  }
+  
+  function getUrl() {}
+  
+  function __toString() {}
+  
+  function getSource() {}
+  
+  function getName() {
+    return 'Foo';
+  }
+  
+}
 
 class ImporterTest extends \Troupe\Tests\TestCase {
   
   public function setUp() {
     $this->project_dir = 'foo/path';
     $this->VDM = $this->quickMock('Troupe\VendorDirectory\Manager');
-    $this->dependency = $this->quickMock('Troupe\Dependency\Dependency');
     $this->output = $this->quickMock('Troupe\Output',array('out'));
     $this->importer = new Importer($this->VDM, $this->output);
     $this->status = $this->quickMock('Troupe\Status\Status');
-  }
-  
-  function testImportingDependency() {
-    $this->dependencyReturnsStatus();
-    $this->importer->import($this->project_dir, $this->dependency);
-  }
-  
-  private function dependencyReturnsStatus() {
-    return $this->dependency->expects($this->once())
-      ->method('load')
-      ->will($this->returnValue($this->status));
-  }
-  
-  private function dependencyReturnsLocalLocation($local_path, $times = false) {
-    $times = $times ? $times : $this->any();
-    return $this->dependency->expects($this->once())
-      ->method('getLocalLocation')
-      ->will($this->returnValue($local_path));
+    $this->dependency = new StubDependency($this->status);
   }
   
   private function statusIsSuccessful($bool = true) {
@@ -42,28 +71,29 @@ class ImporterTest extends \Troupe\Tests\TestCase {
       ->will($this->returnValue($bool));
   }
   
-  private function dependencyReturnsDataLocation($dep_path) {
-    return $this->dependency->expects($this->once())
-      ->method('getDataLocation')
-      ->will($this->returnValue($dep_path));
+  function testImportCallsImportFromDependencyAndReturnsStatus() {
+    $this->dependency = $this->quickMock('Troupe\Dependency\Dependency');
+    $this->dependency->expects($this->once())
+      ->method('import')
+      ->will($this->returnValue($this->status));
+    $this->assertEquals(
+      $this->status, 
+      $this->importer->import($this->project_dir, $this->dependency)
+    );
   }
   
-  function testImportRetrievesStatusFromLoad() {
-    $dep_path   = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->dependencyReturnsDataLocation($dep_path);
+  function testImportLinksPathsWhenStatusIsSuccessful() {
     $this->statusIsSuccessful();
-    $this->dependencyReturnsLocalLocation($local_path);
     $this->VDM->expects($this->once())
       ->method('link')
-      ->with($local_path, $dep_path);
+      ->with(
+        $this->dependency->getLocalLocation(),
+        $this->dependency->getDataLocation()
+      );
     $this->importer->import($this->project_dir, $this->dependency);
   }
   
   function testImportSkipsLinkWhenStatusSuccessCheckReturnsFalse() {
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
     $this->statusIsSuccessful(false);
     $this->VDM->expects($this->never())
       ->method('link');
@@ -71,19 +101,13 @@ class ImporterTest extends \Troupe\Tests\TestCase {
   }
   
   function testImportReturnsStatus() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
     $this->assertEquals(
       $this->status,
       $this->importer->import($this->project_dir, $this->dependency)
     );
   }
   
-  function testImportReturnsStatusEchoesMessage() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
+  function testImportOutputsStatusMessage() {
     $this->status->expects($this->once())
       ->method('getMessage')
       ->will($this->returnValue('foo bar'));
@@ -93,13 +117,30 @@ class ImporterTest extends \Troupe\Tests\TestCase {
     $this->importer->import($this->project_dir, $this->dependency);
   }
   
-  function testImportGetsDependencyDataLocation() {
-    $dep_path = 'a/path/to/the/dependency';
-    $local_path = 'lib/path/my_dependency';
-    $this->dependencyReturnsStatus();
-    $this->dependency->expects($this->once())
-      ->method('getDataLocation');
+  function testImportGetsDependencyDataLocationWhenStatusImportIsSuccessful() {
+    $this->statusIsSuccessful();
     $this->importer->import($this->project_dir, $this->dependency);
+  }
+  
+  function testUpdateCallsUpdateFromDependencyAndReturnsStatus() {
+    $this->dependency = $this->quickMock('Troupe\Dependency\Dependency');
+    $this->dependency->expects($this->once())
+      ->method('update')
+      ->will($this->returnValue($this->status));
+    $this->assertEquals(
+      $this->status, 
+      $this->importer->update($this->project_dir, $this->dependency)
+    );
+  }
+  
+  function testUpdateOutputsStatusMessage() {
+    $this->status->expects($this->once())
+      ->method('getMessage')
+      ->will($this->returnValue('update message'));
+    $this->output->expects($this->once())
+      ->method('out')
+      ->with('update message');
+    $this->importer->update($this->project_dir, $this->dependency);
   }
   
 }

@@ -36,43 +36,6 @@ class RobotSourceTest extends TestCase {
     );
   }
   
-  function testRobotSettingSuccessStatus() {
-    RobotSource::setSuccessStatus($this->url);
-    $this->assertInstanceOf(
-      'Troupe\Status\Success', $this->source->import()
-    );
-  }
-  
-  function testRobotSuccessStatusHasHelpfulMessage() {
-    RobotSource::setSuccessStatus($this->url);
-    $this->assertEquals(
-      "SUCCESS: Robot says '{$this->url}' import is successful.",
-      $this->source->import()->getMessage()
-    );
-  }
-  
-  function testRobotSettingFailureStatus() {
-    RobotSource::setFailureStatus($this->url);
-    $this->assertInstanceOf(
-      'Troupe\Status\Failure', $this->source->import()
-    );
-  }
-  
-  function testRobotFailureStatusHasHelpfulMessage() {
-    RobotSource::setFailureStatus($this->url);
-    $this->assertEquals(
-      "FAIL: Robot says '{$this->url}' import failed.",
-      $this->source->import()->getMessage()
-    );
-  }
-  
-  function testInstanceSetsFailureStatusByDefault() {
-    $this->source = RobotSource::getInstance('someurl');
-    $this->assertInstanceOf(
-      'Troupe\Status\Failure', $this->source->import()
-    );
-  }
-  
   function testGettingUrl() {
     $this->assertEquals($this->url, $this->source->getUrl());
   }
@@ -84,14 +47,100 @@ class RobotSourceTest extends TestCase {
     );
   }
   
-  function testSettingSuccessStatusCreatesDataDir() {
-    RobotSource::setSuccessStatus($this->url);
+  function testRobotSettingImportSuccessStatus() {
+    RobotSource::setImportSuccessStatus($this->url);
+    $this->assertInstanceOf(
+      'Troupe\Status\Success', $this->source->import()
+    );
+  }
+  
+  function testRobotImportSuccessStatusHasHelpfulMessage() {
+    RobotSource::setImportSuccessStatus($this->url);
+    $this->assertEquals(
+      "SUCCESS: Robot says '{$this->url}' import is successful.",
+      $this->source->import()->getMessage()
+    );
+  }
+  
+  function testRobotSettingImportFailureStatus() {
+    RobotSource::setImportFailureStatus($this->url);
+    $this->assertInstanceOf(
+      'Troupe\Status\Failure', $this->source->import()
+    );
+  }
+  
+  function testRobotImportFailureStatusHasHelpfulMessage() {
+    RobotSource::setImportFailureStatus($this->url);
+    $this->assertEquals(
+      "FAIL: Robot says '{$this->url}' import failed.",
+      $this->source->import()->getMessage()
+    );
+  }
+  
+  function testInstanceSetsImportFailureStatusByDefault() {
+    $this->source = RobotSource::getInstance('someurl');
+    $this->assertInstanceOf(
+      'Troupe\Status\Failure', $this->source->import()
+    );
+  }
+  
+  function testSettingImportSuccessStatusCreatesDataDir() {
+    RobotSource::setImportSuccessStatus($this->url);
     $this->assertFileExists($this->source->getDataDir());
   }
   
-  function testSettingFailureStatusRemovesDataDir() {
-    RobotSource::setSuccessStatus($this->url);
-    RobotSource::setFailureStatus($this->url);
+  function testSettingImportFailureStatusRemovesDataDir() {
+    RobotSource::setImportSuccessStatus($this->url);
+    RobotSource::setImportFailureStatus($this->url);
+    $this->assertFileNotExists($this->source->getDataDir());
+  }
+  
+  /*** Update **/
+  function testRobotSettingUpdateSuccessStatus() {
+    RobotSource::setUpdateSuccessStatus($this->url);
+    $this->assertInstanceOf(
+      'Troupe\Status\Success', $this->source->update()
+    );
+  }
+  
+  function testRobotUpdateSuccessStatusHasHelpfulMessage() {
+    RobotSource::setUpdateSuccessStatus($this->url);
+    $this->assertEquals(
+      "SUCCESS: Robot says '{$this->url}' update is successful.",
+      $this->source->update()->getMessage()
+    );
+  }
+  
+  function testRobotSettingUpdateFailureStatus() {
+    RobotSource::setUpdateFailureStatus($this->url);
+    $this->assertInstanceOf(
+      'Troupe\Status\Failure', $this->source->update()
+    );
+  }
+  
+  function testRobotUpdateFailureStatusHasHelpfulMessage() {
+    RobotSource::setUpdateFailureStatus($this->url);
+    $this->assertEquals(
+      "FAIL: Robot says '{$this->url}' update failed.",
+      $this->source->update()->getMessage()
+    );
+  }
+  
+  function testInstanceSetsUpdateFailureStatusByDefault() {
+    $this->source = RobotSource::getInstance('someurl');
+    $this->assertInstanceOf(
+      'Troupe\Status\Failure', $this->source->update()
+    );
+  }
+  
+  function testSettingUpdateSuccessStatusCreatesDataDir() {
+    RobotSource::setUpdateSuccessStatus($this->url);
+    $this->assertFileExists($this->source->getDataDir());
+  }
+  
+  function testSettingUpdateFailureStatusRemovesDataDir() {
+    RobotSource::setUpdateSuccessStatus($this->url);
+    RobotSource::setUpdateFailureStatus($this->url);
     $this->assertFileNotExists($this->source->getDataDir());
   }
 

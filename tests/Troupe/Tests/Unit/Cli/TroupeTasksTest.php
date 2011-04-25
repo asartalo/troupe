@@ -28,4 +28,10 @@ class TroupeTasksTest extends \Troupe\Tests\TestCase {
     $this->troupe_tasks->taskList();
   }
   
+  function testUpdate() {
+    $this->manager->expects($this->once())
+      ->method('updateDependencies');
+    $this->troupe_tasks->taskUpdate();
+  }
+  
 }

@@ -17,32 +17,16 @@ class StubVDM extends \Troupe\VendorDirectory\Manager {
   
 }
 
-class StubSource extends \Troupe\Source\AbstractSource {
-  
-  protected $url;  
-  
-  function __construct($url) {
-    $this->url = $url;
-  }
-  
-  function import() {
-    
-  }
-}
-
 class ManagerTest extends \Troupe\Tests\TestCase {
   
   function setUp() {
     $this->dependency1 = $this->quickMock('Troupe\Dependency\Dependency');
     $this->dependency2 = $this->quickMock('Troupe\Dependency\Dependency');
-    
-    /*$this->dependency1 = new Dependency(
-      'Foo', new StubSource('http://foo.com/foo')*/
     $this->dependencies = array(
       $this->dependency1, $this->dependency2
     );
     $this->projectRootDir = 'a/foo/path';
-    $this->importer = $this->quickMock('Troupe\Importer', array('import'));
+    $this->importer = $this->quickMock('Troupe\Importer', array('import', 'update'));
     $this->output = $this->quickMock('Troupe\Output', array('out'));
     $this->vdm = new StubVDM;
     $this->logger = $this->quickMock('Troupe\Logger', array('log'));
@@ -68,7 +52,7 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->manager->importDependencies();
   }
   
-  function testimportDependenciesSaysImportingMessage() {
+  function testImportDependenciesSaysImportingMessage() {
     $this->dependency1->expects($this->any())
       ->method('getName')
       ->will($this->returnValue('Foo'));
@@ -84,7 +68,7 @@ class ManagerTest extends \Troupe\Tests\TestCase {
     $this->manager->importDependencies();
   }
   
-  function testimportDependenciesPassesImportStatusToLogger() {
+  function testImportDependenciesPassesImportStatusToLogger() {
     $status = $this->quickMock('Troupe\Status\Status');
     $this->importer->expects($this->any())
       ->method('import')
@@ -110,6 +94,43 @@ class ManagerTest extends \Troupe\Tests\TestCase {
       ->method('out')
       ->with($this->dependency2);
     $this->manager->outputDependencies();
+  }
+  
+  function testUpdateDependenciesPassesDependenciesToImporter() {
+    $this->importer->expects($this->at(0))
+      ->method('update')
+      ->with('foo/bar', $this->dependency1);
+    $this->importer->expects($this->at(1))
+      ->method('update')
+      ->with('foo/bar', $this->dependency2);
+    $this->manager->updateDependencies();
+  }
+  
+  function testUpdateDependenciesSaysUpdatingMessage() {
+    $this->dependency1->expects($this->any())
+      ->method('getName')
+      ->will($this->returnValue('Foo'));
+    $this->dependency2->expects($this->any())
+      ->method('getName')
+      ->will($this->returnValue('Bar'));
+    $this->output->expects($this->at(0))
+      ->method('out')
+      ->with("\n==========\nUpdating: Foo");
+    $this->output->expects($this->at(1))
+      ->method('out')
+      ->with("\n==========\nUpdating: Bar");
+    $this->manager->updateDependencies();
+  }
+  
+  function testUpdateDependenciesPassesUpdateStatusToLogger() {
+    $status = $this->quickMock('Troupe\Status\Status');
+    $this->importer->expects($this->any())
+      ->method('update')
+      ->will($this->returnValue($status));
+    $this->logger->expects($this->exactly(2))
+      ->method('log')
+      ->with('update_results', $status);
+    $this->manager->updateDependencies();
   }
   
 }

@@ -2,7 +2,7 @@
 
 namespace Troupe;
 
-use \Troupe\Dependency\Dependency;
+use \Troupe\Dependency\DependencyInterface;
 use \Troupe\Status\Failure;
 use \Troupe\VendorDirectory\Manager as VDM;
 
@@ -18,13 +18,19 @@ class Importer {
   }
   
   // TODO: Refactor this.
-  function import($project_vendor_dir, Dependency $dependency) {
-    $data_location = $dependency->getDataLocation();
-    $local_location = $dependency->getLocalLocation();
-    $status = $dependency->load();
+  function import($project_vendor_dir, DependencyInterface $dependency) {
+    $status = $dependency->import();
     if ($status->isSuccessful()) {
-      $this->linkLocations($data_location, $local_location);
+      $this->linkLocations(
+        $dependency->getDataLocation(),$dependency->getLocalLocation()
+      );
     }
+    $this->output->out($status->getMessage());
+    return $status;
+  }
+  
+  function update($project_vendor_dir, DependencyInterface $dependency) {
+    $status = $dependency->update();
     $this->output->out($status->getMessage());
     return $status;
   }
