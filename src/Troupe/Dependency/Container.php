@@ -14,9 +14,10 @@ class Container extends \Pimple {
       'type' => 'unknown'
     ),
     $_source_types = array(
-      'svn' => 'SourceSvn',
-      'git' => 'SourceGit',
-      'archive' => 'SourceArchive'
+      'svn'     => 'SourceSvn',
+      'git'     => 'SourceGit',
+      'archive' => 'SourceArchive',
+      'file'    => 'SourceFile'
     );
   
   
@@ -68,6 +69,13 @@ class Container extends \Pimple {
       return new \Troupe\Source\Archive(
         $c->options['url'], $c->VDM, $c->SystemUtilities, $c->data_directory,
         $c->Expander, $c->Cibo
+      );
+    };
+    
+    $this->SourceFile = function(\Pimple $c) {
+      return new \Troupe\Source\File(
+        $c->options['url'], $c->VDM, $c->SystemUtilities, $c->data_directory,
+        $c->Cibo
       );
     };
     

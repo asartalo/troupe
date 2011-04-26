@@ -64,4 +64,8 @@ class SystemUtilities {
     return unlink($file);
   }
   
+  function rename($oldname, $newname) {
+    rename($oldname, $newname);
+  }
+  
 }

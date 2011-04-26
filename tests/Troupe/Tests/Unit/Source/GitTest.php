@@ -49,6 +49,18 @@ class GitTest extends \Troupe\Tests\TestCase {
     );
   }
   
+  /**
+   * Fails for:
+      Already up-to-date.
+      Entering 'lib/vendor/Symfony/Component/Console'
+      You are not currently on a branch, so I cannot use any
+      'branch.<branchname>.merge' in your configuration file.
+      Please specify which remote branch you want to use on the command
+      line and try again (e.g. 'git pull <repository> <refspec>').
+      See git-pull(1) for details.
+      Stopping at 'lib/vendor/Symfony/Component/Console'; script returned non-zero status.
+      FAIL: Unable to update git://github.com/doctrine/doctrine2.git.
+   */
   function testGetCliUpdateCommand() {
     $folder_name = md5($this->url);
     $this->assertEquals(

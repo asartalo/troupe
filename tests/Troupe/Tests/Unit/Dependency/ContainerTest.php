@@ -81,6 +81,13 @@ class ContainerTest extends \Troupe\Tests\TestCase {
     );
   }
   
+  function testSourceReturnsFileSourceWhenTypeIsFile() {
+    $this->options['type'] = 'file';
+    $this->assertInstanceOf(
+      'Troupe\Source\File', $this->getContainer()->Dependency->getSource()
+    );
+  }
+  
   function testSourceReturnsSourceArchiveWhenTypeIsArchiveWithExpander() {
     $this->options['type'] = 'archive';
     $container = $this->getContainer();
