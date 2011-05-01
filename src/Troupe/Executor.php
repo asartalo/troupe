@@ -4,8 +4,11 @@ namespace Troupe;
 
 class Executor {
   
-  function execute($command) {
-    exec($command, $output);
+  function execute($command, $return_status = false) {
+    exec($command, $output, $status);
+    if ($return_status) {
+      return $status;
+    }
     return $output;
   }
   

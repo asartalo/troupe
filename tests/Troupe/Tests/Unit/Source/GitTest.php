@@ -64,7 +64,7 @@ class GitTest extends \Troupe\Tests\TestCase {
   function testGetCliUpdateCommand() {
     $folder_name = md5($this->url);
     $this->assertEquals(
-      "cd '{$this->data_dir}/$folder_name' && git pull origin && git submodule foreach git pull",
+      "cd '{$this->data_dir}/$folder_name' && git pull origin && git submodule foreach git pull origin master",
       $this->git_source->getCliUpdateCommand($this->url, "{$this->data_dir}/$folder_name")
     );
   }
