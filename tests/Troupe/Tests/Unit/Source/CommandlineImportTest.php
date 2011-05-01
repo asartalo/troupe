@@ -13,13 +13,12 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
     $this->executor  = $this->getMock('Troupe\Executor');
     $this->url = 'http://git.source.com/example';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->vdm = $this->quickMock('Troupe\VendorDirectory\Manager', array('isDataImported', 'importSuccess'));
+    $this->vdm = $this->quickMock(
+      'Troupe\VendorDirectory\Manager', array('isDataImported', 'importSuccess')
+    );
     $this->source = $this->getMock(
       'Troupe\Source\CommandlineImport',
-      array(
-        'getCliCheckOutCommand', 'checkIfCheckoutSuccess',
-        'getCliUpdateCommand', 'checkIfUpdateSuccess'
-      ),
+      array('getCliCheckOutCommand', 'getCliUpdateCommand'),
       array($this->url, $this->vdm, $this->executor, $this->data_dir)
     );
   }
@@ -48,21 +47,6 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
     $this->source->import();
   }
   
-  function testImportTestsCliCheckOutCommandResultAgainstCheckoutSuccessTest() {
-    $this->vdmIsDataImported(false);
-    $this->source->expects($this->once())
-      ->method('getCliCheckOutCommand')
-      ->will($this->returnValue('my command'));
-    $this->executor->expects($this->once())
-      ->method('system')
-      ->with('my command')
-      ->will($this->returnValue('Success!'));
-    $this->source->expects($this->once())
-      ->method('checkIfCheckoutSuccess')
-      ->with('Success!');
-    $this->source->import();
-  }
-  
   function testImportSkipsCheckoutIfDataHasAlreadyBeenImported() {
     $this->vdmIsDataImported(true);
     $this->executor->expects($this->never())
@@ -72,12 +56,12 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
   
   function checkOutIsSuccessful() {
     $this->vdmIsDataImported(false);
-    $this->source->expects($this->once())
-      ->method('checkIfCheckoutSuccess')
-      ->will($this->returnValue(true));
+    $this->executor->expects($this->once())
+      ->method('system')
+      ->will($this->returnValue(0));
   }
   
-  function testImportReturnsOkayStatusMessageIfSuccessful() {
+  function testImportReturnsOkayStatusIfSuccessful() {
     $folder_name = md5($this->url);
     $status = new Success(
       \Troupe\Source\STATUS_OK, "SUCCESS: Imported {$this->url}.",
@@ -95,11 +79,12 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
     $this->source->import();
   }
   
-  function testImportReturnsOkayStatusMessageIfVdmSaysDataHasAlreadyBeenImported() {
+  function testImportReturnsOkayStatusIfVdmSaysDataHasAlreadyBeenImported() {
     $folder_name = md5($this->url);
     $this->vdmIsDataImported(true);
     $status = new Success(
-      \Troupe\Source\STATUS_OK, "SUCCESS: {$this->url} has already been imported.",
+      \Troupe\Source\STATUS_OK,
+      "SUCCESS: {$this->url} has already been imported.",
       "{$this->data_dir}/$folder_name"
     );
     $this->assertEquals($status, $this->source->import());
@@ -107,9 +92,9 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
   
   private function checkOutIsFailure() {
     $this->vdmIsDataImported(false);
-    $this->source->expects($this->once())
-      ->method('checkIfCheckoutSuccess')
-      ->will($this->returnValue(false));
+    $this->executor->expects($this->once())
+      ->method('system')
+      ->will($this->returnValue(1));
   }
   
   function testImportReturnsFailStatusMessageIfNotSuccessful() {
@@ -183,21 +168,6 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
     );
   }
   
-  function testUpdateTestsCliUpdateCommandResultAgainstUpdateSuccessTest() {
-    $this->vdmIsDataImported(true);
-    $this->source->expects($this->once())
-      ->method('getCliUpdateCommand')
-      ->will($this->returnValue('my command'));
-    $this->executor->expects($this->once())
-      ->method('system')
-      ->with('my command')
-      ->will($this->returnValue('Success!'));
-    $this->source->expects($this->once())
-      ->method('checkIfUpdateSuccess')
-      ->with('Success!');
-    $this->source->update();
-  }
-  
   function testUpdateReturnsOkayStatusMessageIfSuccessful() {
     $folder_name = md5($this->url);
     $status = new Success(
@@ -205,17 +175,17 @@ class CommandlineImportTest extends \Troupe\Tests\TestCase {
       "{$this->data_dir}/$folder_name"
     );
     $this->vdmIsDataImported(true);
-    $this->source->expects($this->once())
-      ->method('checkIfUpdateSuccess')
-      ->will($this->returnValue(true));
+    $this->executor->expects($this->once())
+      ->method('system')
+      ->will($this->returnValue(0));
     $this->assertEquals($status, $this->source->update());
   }
   
   function testUpdateReturnsFailStatusMessageIfNotSuccessful() {
     $this->vdmIsDataImported(true);
-    $this->source->expects($this->once())
-      ->method('checkIfUpdateSuccess')
-      ->will($this->returnValue(false));
+    $this->executor->expects($this->once())
+      ->method('system')
+      ->will($this->returnValue(1));
     $status = new Failure(
       \Troupe\Source\STATUS_FAIL, "FAIL: Unable to update {$this->url}."
     );

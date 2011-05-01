@@ -12,9 +12,13 @@ class Executor {
     return $output;
   }
   
-  function system($command) {
+  function system($command, $return_status = false) {
     echo $command. "\n";
-    return system($command);
+    $output = system($command, $status);
+    if ($return_status) {
+      return $status;
+    }
+    return $output;
   }
 
 }

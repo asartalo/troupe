@@ -46,10 +46,10 @@ abstract class CommandlineImport implements Source {
       return $this->import();
     }
     $troupe_lib_path = $this->getDataDir();
-    $output = $this->executor->system(
-      $this->getCliUpdateCommand($this->url, $troupe_lib_path)
+    $status = $this->executor->system(
+      $this->getCliUpdateCommand($this->url, $troupe_lib_path), true
     );
-    if ($this->checkIfUpdateSuccess($output)) {
+    if ($status === 0) {
       return new Success(
         \Troupe\Source\STATUS_OK, 
         "SUCCESS: Updated {$this->url}.", $troupe_lib_path
@@ -61,10 +61,10 @@ abstract class CommandlineImport implements Source {
   }
   
   private function checkOut($troupe_lib_path) {
-    $output = $this->executor->system(
-      $this->getCliCheckOutCommand($this->url, $troupe_lib_path)
+    $status = $this->executor->system(
+      $this->getCliCheckOutCommand($this->url, $troupe_lib_path), true
     );
-    if ($this->checkIfCheckoutSuccess($output)) {
+    if ($status === 0) {
       $this->vdm->importSuccess($this->url);
       return new Success(
         \Troupe\Source\STATUS_OK, 
@@ -78,10 +78,6 @@ abstract class CommandlineImport implements Source {
   
   abstract function getCliCheckOutCommand($url, $troupe_lib_path);
   
-  abstract function checkIfCheckoutSuccess($last_line);
-  
   abstract function getCliUpdateCommand($url, $troupe_lib_path);
-  
-  abstract function checkIfUpdateSuccess($last_line);
   
 }
