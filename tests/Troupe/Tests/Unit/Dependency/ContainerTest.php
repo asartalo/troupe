@@ -3,6 +3,7 @@ namespace Troupe\Tests\Unit\Dependency;
 
 require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
+require_once 'Cibo/Cibo.php';
 use \Troupe\Source\Source;
 use \Troupe\Dependency\Container;
 use \Troupe\Dependency\Dependency;
@@ -23,7 +24,7 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       'type' => 'svn', 'url'  => 'http://svn.foo.com/repository'
     );
   }
-  
+
   private function getContainer($name = 'foo') {
     return new Container(
       $name, $this->project_dir, $this->settings, $this->options,
@@ -31,13 +32,13 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       $this->data_directory
     );
   }
-  
+
   function testDependencyReturnsDependency() {
     $this->assertInstanceOf(
       'Troupe\Dependency\Dependency', $this->getContainer()->Dependency
     );
   }
-  
+
   function testDependencySetsDefaultLocation() {
     $this->project_dir = 'another/path';
     $this->assertEquals(
@@ -45,7 +46,7 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       $this->getContainer()->Dependency->getLocalLocation()
     );
   }
-  
+
   function testDependencySetsAliasedtLocation() {
     $this->options['alias'] = 'bar';
     $this->project_dir = 'another/path';
@@ -54,7 +55,7 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       $this->getContainer()->Dependency->getLocalLocation()
     );
   }
-  
+
   function testDependencyReturnsDependencyWithSource() {
     $container = $this->getContainer('bar');
     $container->Source = $source = new \Troupe\Source\Unknown;
@@ -67,27 +68,27 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       'Troupe\Source\Unknown', $this->getContainer()->Dependency->getSource()
     );
   }
-  
+
   function testSourceReturnsSvnSourceWhenTypeIsSvn() {
     $this->assertInstanceOf(
       'Troupe\Source\Svn', $this->getContainer()->Dependency->getSource()
     );
   }
-  
+
   function testSourceReturnsGitSourceWhenTypeIsGit() {
     $this->options['type'] = 'git';
     $this->assertInstanceOf(
       'Troupe\Source\Git', $this->getContainer()->Dependency->getSource()
     );
   }
-  
+
   function testSourceReturnsFileSourceWhenTypeIsFile() {
     $this->options['type'] = 'file';
     $this->assertInstanceOf(
       'Troupe\Source\File', $this->getContainer()->Dependency->getSource()
     );
   }
-  
+
   function testSourceReturnsSourceArchiveWhenTypeIsArchiveWithExpander() {
     $this->options['type'] = 'archive';
     $container = $this->getContainer();
@@ -96,14 +97,14 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       'Troupe\Source\Archive', $container->Dependency->getSource()
     );
   }
-  
+
   function testExpanderReturnsNullExpanderByDefault() {
     unset($this->options['url']);
     $this->assertInstanceOf(
       'Troupe\Expander\NullExpander', $this->getContainer()->Expander
     );
   }
-  
+
   /**
    * @dataProvider dataExpanderReturnsCorrectExpanderType
    */
@@ -113,7 +114,7 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       "Troupe\Expander\\$type", $this->getContainer()->Expander
     );
   }
-  
+
   function dataExpanderReturnsCorrectExpanderType() {
     return array(
       array('zip', 'Zip'),
@@ -124,5 +125,5 @@ class ContainerTest extends \Troupe\Tests\TestCase {
       array('tar.gz', 'Tgz'),
     );
   }
-  
+
 }

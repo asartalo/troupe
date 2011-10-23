@@ -7,7 +7,7 @@ use \Troupe\SystemUtilities;
 use \Troupe\VendorDirectory\Manager as VDM;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
-use \Cibo;
+use \Cibo\Cibo;
 
 /**
  * @todo Refactor downloading to a separate class
@@ -16,7 +16,7 @@ use \Cibo;
  *       instead of just using import()
  */
 class Archive extends AbstractSource {
-  
+
   protected $expander, $system_utilities, $vdm, $cibo;
 
   function __construct(
@@ -30,22 +30,22 @@ class Archive extends AbstractSource {
     $this->expander = $expander;
     $this->cibo = $cibo;
   }
-  
+
   function import() {
     if (!$this->vdm->isDataImported($this->url)) {
       return $this->download();
     }
     return new Success(
-      \Troupe\Source\STATUS_OK, 
+      \Troupe\Source\STATUS_OK,
       "SUCCESS: {$this->url} has already been imported.",
       $this->getDataDir()
     );
   }
-  
+
   function update() {
     return $this->import();
   }
-  
+
   private function download() {
     if ($this->cibo->download($this->url, $this->getLocalFilePath())) {
       $this->vdm->importSuccess($this->url);
@@ -60,10 +60,10 @@ class Archive extends AbstractSource {
       'There was a problem downloading the remote resource.'
     );
   }
-  
+
   private function getLocalFilePath() {
-    return $this->data_directory . '/' . 
+    return $this->data_directory . '/' .
         pathinfo($this->url, PATHINFO_BASENAME);
   }
-  
+
 }

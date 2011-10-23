@@ -5,10 +5,9 @@ require_once realpath(__DIR__ . '/../src/SplClassLoader.php');
 $path = realpath(__DIR__ . '/../src/');
 $classLoader = new SplClassLoader('Troupe', $path);
 $classLoader->register();
-$classLoader = new SplClassLoader('Cibo', $path . '/Cibo/src');
-$classLoader->register();
 $classLoader = new SplClassLoader('Pimple', $path . '/Pimple/lib');
 $classLoader->register();
+require_once 'Cibo/Cibo.php';
 $container = new \Troupe\Container(getcwd(), $argv);
 $container->EnvironmentHelper->run();
 ?>

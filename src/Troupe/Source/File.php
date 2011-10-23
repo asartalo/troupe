@@ -6,7 +6,7 @@ use \Troupe\SystemUtilities;
 use \Troupe\VendorDirectory\Manager as VDM;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
-use \Cibo;
+use \Cibo\Cibo;
 
 /**
  * @todo Refactor downloading to a separate class
@@ -28,7 +28,7 @@ class File extends AbstractSource {
     $this->system_utilities = $system_utilities;
     $this->cibo = $cibo;
   }
-  
+
   function import() {
     if (!$this->vdm->isDataImported($this->url)) {
       $result = $this->cibo->download(
@@ -40,7 +40,7 @@ class File extends AbstractSource {
           $this->getLocalFilePath(), $this->getDataDir()
         );
         return new Success(
-          \Troupe\Source\STATUS_OK, 
+          \Troupe\Source\STATUS_OK,
           "SUCCESS: Imported {$this->url}.",
           $this->getDataDir()
         );
@@ -52,18 +52,18 @@ class File extends AbstractSource {
       }
     }
     return new Success(
-      \Troupe\Source\STATUS_OK, 
+      \Troupe\Source\STATUS_OK,
       "SUCCESS: {$this->url} has already been imported.",
       $this->getDataDir()
     );
   }
-  
+
   function update() {
     return $this->import();
   }
-  
+
   private function getLocalFilePath() {
-    return $this->data_directory . '/' . 
+    return $this->data_directory . '/' .
         pathinfo($this->url, PATHINFO_BASENAME);
   }
 

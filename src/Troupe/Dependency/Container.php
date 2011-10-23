@@ -9,7 +9,7 @@ use \Troupe\SystemUtilities;
 
 class Container extends \Pimple {
 
-  private 
+  private
     $_default_options = array(
       'type' => 'unknown'
     ),
@@ -19,8 +19,8 @@ class Container extends \Pimple {
       'archive' => 'SourceArchive',
       'file'    => 'SourceFile'
     );
-  
-  
+
+
   function __construct(
     $name, $project_dir, Settings $settings, array $options,
     VDM $vdm, Executor $executor, SystemUtilities $system_utilities,
@@ -38,13 +38,13 @@ class Container extends \Pimple {
     $this->source_types = $this->_source_types;
     $this->defineGraph();
   }
-  
+
   private function defineGraph() {
-    
+
     $this->Dependency = function(\Pimple $c) {
       return new Dependency($c->name, $c->Source, $c->local_dir, $c->alias);
     };
-    
+
     $this->Source = function(\Pimple $c) {
       if (isset($c->source_types[$c->options['type']])) {
         $type = $c->source_types[$c->options['type']];
@@ -52,37 +52,37 @@ class Container extends \Pimple {
       }
       return new \Troupe\Source\Unknown;
     };
-    
+
     $this->SourceSvn = function(\Pimple $c) {
       return new \Troupe\Source\Svn(
         $c->options['url'], $c->VDM, $c->Executor, $c->data_directory
       );
     };
-    
+
     $this->SourceGit = function(\Pimple $c) {
       return new \Troupe\Source\Git(
         $c->options['url'], $c->VDM, $c->Executor, $c->data_directory
       );
     };
-    
+
     $this->SourceArchive = function(\Pimple $c) {
       return new \Troupe\Source\Archive(
         $c->options['url'], $c->VDM, $c->SystemUtilities, $c->data_directory,
         $c->Expander, $c->Cibo
       );
     };
-    
+
     $this->SourceFile = function(\Pimple $c) {
       return new \Troupe\Source\File(
         $c->options['url'], $c->VDM, $c->SystemUtilities, $c->data_directory,
         $c->Cibo
       );
     };
-    
+
     $this->Cibo = function(\Pimple $c) {
-      return new \Cibo;
+      return new \Cibo\Cibo;
     };
-    
+
     $this->Expander = function(\Pimple $c) {
       if (isset($c->options['url'])) {
         $path_info = pathinfo($c->options['url']);
@@ -101,40 +101,40 @@ class Container extends \Pimple {
       }
       return new \Troupe\Expander\NullExpander;
     };
-    
+
     $this->ExpanderZip = function (\Pimple $c) {
       return new \Troupe\Expander\Zip;
     };
-    
+
     $this->ExpanderTar = function (\Pimple $c) {
       return new \Troupe\Expander\Tar;
     };
-    
+
     $this->ExpanderGzip = function (\Pimple $c) {
       return new \Troupe\Expander\Gzip;
     };
-    
+
     $this->ExpanderTgz = function (\Pimple $c) {
       return new \Troupe\Expander\Tgz($c->Utilities);
     };
-    
+
     $this->Utilities = function (\Pimple $c) {
       return new \Troupe\Utilities;
     };
-    
+
     $this->local_dir = function(\Pimple $c) {
       return $c->project_dir . '/' . $c->vendor_path;
     };
-    
+
     $this->vendor_path = function(\Pimple $c) {
       return $c->settings->get('vendor_dir');
     };
-    
+
     $this->alias = function(\Pimple $c) {
       return isset($c->options['alias']) ? $c->options['alias'] : '';
     };
   }
-  
-  
-    
+
+
+
 }

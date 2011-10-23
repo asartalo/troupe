@@ -182,10 +182,6 @@ class Container extends \Pimple {
       return new FileWriter;
     };
     
-    $this->Cibo = function(\Pimple $c) {
-      return new \Cibo;
-    };
-    
   }
 
 }

@@ -3,6 +3,7 @@ namespace Troupe\Tests\Unit\Source;
 
 require_once realpath(__DIR__ . '/../../../../bootstrap.php');
 
+require_once 'Cibo/Cibo.php';
 use \Troupe\Source\Archive;
 use \Troupe\Status\Success;
 use \Troupe\Status\Failure;
@@ -15,7 +16,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     $this->utilities = $this->quickMock('Troupe\SystemUtilities');
     $this->url = 'http://zip.source.com/example.zip';
     $this->data_dir = 'a/path/to/a/directory';
-    $this->cibo = $this->quickMock('Cibo');
+    $this->cibo = $this->quickMock('Cibo\Cibo');
     $this->vdm = $this->quickMock(
       'Troupe\VendorDirectory\Manager',
       array('isDataImported', 'importSuccess')
@@ -25,22 +26,22 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
       $this->expander, $this->cibo
     );
   }
-  
+
   function testImportChecksWithVdmIfDataHasAlreadyBeenImported() {
     $this->vdmExpectsIsDataImported()->with($this->url);
     $this->zip_source->import();
   }
-  
+
   private function vdmIsDataImported($bool) {
     return $this->vdmExpectsIsDataImported()
       ->will($this->returnValue($bool));
   }
-  
+
   private function vdmExpectsIsDataImported() {
     return $this->vdm->expects($this->once())
       ->method('isDataImported');
   }
-  
+
   private function ciboDownload($bool) {
     return $this->cibo->expects($this->once())
       ->method('download')
@@ -54,14 +55,14 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
       ->with($this->url, $this->data_dir . '/example.zip');
     $this->zip_source->import();
   }
-  
+
   function testImportSkipsDownloadIfFileHasAlreadyBeenImported() {
     $this->vdmIsDataImported(true);
     $this->cibo->expects($this->never())
       ->method('download');
     $this->zip_source->import();
   }
-  
+
   function testImportReturnsOkayStatusMessageIfVdmSaysDataHasAlreadyBeenImported() {
     $folder_name = md5($this->url);
     $this->vdmIsDataImported(true);
@@ -72,7 +73,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     );
     $this->assertEquals($status, $this->zip_source->import());
   }
-  
+
   function testImportMarksUrlAsImportedOnVdmWhenDownloadIsSuccessful() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(true);
@@ -81,7 +82,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
       ->with($this->url);
     $this->zip_source->import();
   }
-  
+
   function testImportDoesNotMarkUrlAsImportedOnVdmWhenDownloadIsUnsuccessful() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(false);
@@ -89,7 +90,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
       ->method('importSuccess');
     $this->zip_source->import();
   }
-  
+
   function testImporReturnsSuccessStatusWhenSuccessful() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(true);
@@ -100,7 +101,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     );
     $this->assertEquals($status, $this->zip_source->import());
   }
-  
+
   function testImporReturnsFailureStatusWhenDownloadIsUnsuccessful() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(false);
@@ -111,7 +112,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     );
     $this->assertEquals($status, $this->zip_source->import());
   }
-  
+
   function testImportExpandsDownloadedFile() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(true);
@@ -123,7 +124,7 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
       );
     $this->zip_source->import();
   }
-  
+
   function testImportDoesNotExpandFileWhenDownloadIsUnsuccessful() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(false);
@@ -131,14 +132,14 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
       ->method('expand');
     $this->zip_source->import();
   }
-  
+
   function testUpdateDoesNotDownloadFileWhenItHasBeenImportedAlready() {
     $this->vdmIsDataImported(true);
     $this->cibo->expects($this->never())
       ->method('download');
     $this->zip_source->update();
   }
-  
+
   function testUpdateCallsImportWhenItHasntBeenDownloadedYet() {
     $this->vdmIsDataImported(false);
     $this->ciboDownload(true);
@@ -149,5 +150,5 @@ class ArchiveTest extends \Troupe\Tests\TestCase {
     );
     $this->assertEquals($status, $this->zip_source->update());
   }
-  
+
 }
