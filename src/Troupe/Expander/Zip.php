@@ -2,10 +2,12 @@
 
 namespace Troupe\Expander;
 
-require_once realpath(__DIR__ . '/../../PclZip/pclzip.lib.php');
+if (!class_exists('PclZip')) {
+  require_once realpath(__DIR__ . '/../PclZip/pclzip.lib.php');
+}
 
 class Zip implements Expander {
-  
+
   function expand($archive, $to) {
     $archive = new \PclZip($archive);
     $files = $archive->extract($to);
@@ -19,5 +21,5 @@ class Zip implements Expander {
     unset($archive);
     return $return;
   }
-  
+
 }

@@ -11,16 +11,16 @@ use Troupe\Container;
 use Troupe\Tests\RobotSource;
 
 class TestContainer extends Container {
-  
+
   function dependencyContainerSetup($dc) {
-    $dc->Source = function(\Pimple $c) {
-      return \Troupe\Tests\RobotSource::getInstance($c->options['url']);
+    $dc['Source'] = function(\Pimple $c) {
+      return \Troupe\Tests\RobotSource::getInstance($c['options']['url']);
     };
   }
 }
 
 class StandardUseCaseTest extends \Troupe\Tests\TestCase {
-  
+
   function setUp() {
     $this->project_dir = $this->getTestDataDir() . '/test_project';
     $this->argv_parser = new \Troupe\Tests\ArgvParser('foo.php');
@@ -31,45 +31,45 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
     $this->clearTestDataDir();
     $this->setupProjectDir();
   }
-  
+
   private function setupProjectDir() {
     $this->recursive_copy(
       $this->getFixturesDir() . '/test_project',
       $this->getTestDataDir() . '/test_project'
     );
   }
-  
-  private function recursive_copy($src,$dst) { 
-    $dir = opendir($src); 
-    @mkdir($dst); 
-    while(false !== ( $file = readdir($dir)) ) { 
-      if (( $file != '.' ) && ( $file != '..' )) { 
-        if ( is_dir($src . '/' . $file) ) { 
-          $this->recursive_copy($src . '/' . $file,$dst . '/' . $file); 
-        } 
-        else { 
-          copy($src . '/' . $file,$dst . '/' . $file); 
-        } 
-      } 
-    } 
-    closedir($dir); 
-  } 
-  
+
+  private function recursive_copy($src,$dst) {
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+      if (( $file != '.' ) && ( $file != '..' )) {
+        if ( is_dir($src . '/' . $file) ) {
+          $this->recursive_copy($src . '/' . $file,$dst . '/' . $file);
+        }
+        else {
+          copy($src . '/' . $file,$dst . '/' . $file);
+        }
+      }
+    }
+    closedir($dir);
+  }
+
   function tearDown() {
     $this->clearTestDataDir();
   }
-  
+
   function testBasicIntegration() {
-    $this->container->EnvironmentHelper->run();
+    $this->container['EnvironmentHelper']->run();
   }
-  
+
   function testListDependencies() {
     $commands = $this->argv_parser->parse('list');
     $this->container = new TestContainer(
       $this->project_dir, $commands
     );
-    $this->container->Output = $this->output;
-    $this->container->EnvironmentHelper->run();
+    $this->container['Output'] = $this->output;
+    $this->container['EnvironmentHelper']->run();
     $this->assertContains(
       "iko : git://some.git.site/iko/iko.git\n" .
         "blon : http://svn.barsite.com/blon_repo\n" .
@@ -80,30 +80,30 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
       $this->output->getOutput()
     );
   }
-  
+
   function testGettingDependencies() {
-    $dependencies = $this->container->Manager->getDependencies();
+    $dependencies = $this->container['Manager']->getDependencies();
     $this->assertInternalType('array', $dependencies);
     $this->assertEquals(5, count($dependencies));
   }
-  
+
   function testSettings() {
-    $this->assertEquals('src', $this->container->Settings->get('vendor_dir'));
+    $this->assertEquals('src', $this->container['Settings']->get('vendor_dir'));
   }
-  
+
   function testGettingFullDirectoryFromManager() {
     $this->assertEquals(
       $this->project_dir . '/src',
-      $this->container->Manager->getVendorDirectory()
+      $this->container['Manager']->getVendorDirectory()
     );
   }
-  
+
   function testAssemble() {
     $commands = $this->argv_parser->parse('assemble');
     $this->container = new TestContainer(
       $this->project_dir, $commands
     );
-    $this->container->Output = $this->output;
+    $this->container['Output'] = $this->output;
     RobotSource::setImportSuccessStatus(
       'git://some.git.site/iko/iko.git'
     );
@@ -111,7 +111,7 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
     RobotSource::setImportSuccessStatus(
       'http://svn.barsite.com/blon_repo'
     );
-    $this->container->EnvironmentHelper->run();
+    $this->container['EnvironmentHelper']->run();
     $this->assertContains(
       "Importing: iko\n" .
       "SUCCESS: Robot says 'git://some.git.site/iko/iko.git' import is successful.",
@@ -131,13 +131,13 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
       $this->output->getOutput()
     );
   }
-  
+
   function testUpdatingTroupe() {
     $commands = $this->argv_parser->parse('update');
     $this->container = new TestContainer(
       $this->project_dir, $commands
     );
-    $this->container->Output = $this->output;
+    $this->container['Output'] = $this->output;
     RobotSource::setUpdateSuccessStatus(
       'git://some.git.site/iko/iko.git'
     );
@@ -147,7 +147,7 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
     RobotSource::setUpdateFailureStatus(
       'http://www.somewhere.org/files/pcell.zip'
     );
-    $this->container->EnvironmentHelper->run();
+    $this->container['EnvironmentHelper']->run();
     $this->assertContains(
       "Updating: iko\n" .
       "SUCCESS: Robot says 'git://some.git.site/iko/iko.git' update is successful.",
@@ -167,5 +167,5 @@ class StandardUseCaseTest extends \Troupe\Tests\TestCase {
       $this->output->getOutput()
     );
   }
-  
+
 }

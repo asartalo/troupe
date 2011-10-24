@@ -1,7 +1,7 @@
 Troupe
 ======
 
-**Troupe** is a tool for declaring and managing source code dependencies in PHP. 
+**Troupe** is a tool for declaring and managing source code dependencies in PHP.
 
 With Troupe you can:
 
@@ -26,9 +26,9 @@ Dependency information is stored in a mytroupe file (here we use mytroupe.php)
         'alias'   => 'symfony2', // This will be the directory name the source will be renamed to. Defaults to label/name
         'move_to' => 'lib/src', // Defaults to 'vendor_dir' in settings
       ),
-      
+
       'doctrine' => 'git://github.com/doctrine/doctrine2.git',
-      
+
       // Pear import is not yet implemented
       'phpunit' => array(
         'type' => 'pear',
@@ -36,14 +36,14 @@ Dependency information is stored in a mytroupe file (here we use mytroupe.php)
         'pear_name' => 'phpunit/PHPUnit'
       ),
       // Or 'phpunit' => 'pear://pear.phpunit.de/PHPUnit'
-      
+
       'minify' => 'http://code.google.com/p/minify/downloads/detail?name=minify_2.1.3.zip',
-      
+
       // This checks the platform or environment where the application runs
       '_platform' => array(
         'php_version' => '5.3.x'
       ),
-      
+
       // This is for the project settings
       '_settings' => array(
         'vendor_dir' => 'lib/src', // Default is 'vendor'
@@ -59,7 +59,7 @@ And voila! Dependencies solved.
 To update your sources, execute:
 
     troupe update
-    
+
 To list all dependencies:
 
     troupe list
@@ -100,3 +100,7 @@ TODO
 - Support PEAR sources
 - Declare where in the source tree the interesting part of the code is located
 
+MISC
+----
+
+- Troupe uses PclZip to expand Zip archives. PclZip is released under LGPL.

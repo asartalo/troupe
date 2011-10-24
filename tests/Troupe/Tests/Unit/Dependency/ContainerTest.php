@@ -23,11 +23,8 @@ class ContainerTest extends \Troupe\Tests\TestCase {
     $this->options = array(
       'type' => 'svn', 'url'  => 'http://svn.foo.com/repository'
     );
-  }
-
-  private function getContainer($name = 'foo') {
-    return new Container(
-      $name, $this->project_dir, $this->settings, $this->options,
+    $this->container = new Container(
+      'foo', $this->project_dir, $this->settings, $this->options,
       $this->vdm, $this->executor, $this->system_utilities,
       $this->data_directory
     );
@@ -35,73 +32,110 @@ class ContainerTest extends \Troupe\Tests\TestCase {
 
   function testDependencyReturnsDependency() {
     $this->assertInstanceOf(
-      'Troupe\Dependency\Dependency', $this->getContainer()->Dependency
+      'Troupe\Dependency\Dependency',
+      $this->container['Dependency']
     );
   }
 
   function testDependencySetsDefaultLocation() {
-    $this->project_dir = 'another/path';
+    $container = new Container(
+      'foo', 'another/path', $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertEquals(
       'another/path/vendor/foo',
-      $this->getContainer()->Dependency->getLocalLocation()
+      $container['Dependency']->getLocalLocation()
     );
   }
 
   function testDependencySetsAliasedtLocation() {
     $this->options['alias'] = 'bar';
-    $this->project_dir = 'another/path';
+    $container = new Container(
+      'foo', 'another/path', $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertEquals(
       'another/path/vendor/bar',
-      $this->getContainer()->Dependency->getLocalLocation()
+      $container['Dependency']->getLocalLocation()
     );
   }
 
   function testDependencyReturnsDependencyWithSource() {
-    $container = $this->getContainer('bar');
-    $container->Source = $source = new \Troupe\Source\Unknown;
-    $this->assertSame($source, $container->Dependency->getSource());
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
+    $container['Source'] = $source = new \Troupe\Source\Unknown;
+    $this->assertSame($source, $container['Dependency']->getSource());
   }
 
   function testSourceReturnsUnknownSourceByDefault() {
     unset($this->options['type']);
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertInstanceOf(
-      'Troupe\Source\Unknown', $this->getContainer()->Dependency->getSource()
+      'Troupe\Source\Unknown', $container['Dependency']->getSource()
     );
   }
 
   function testSourceReturnsSvnSourceWhenTypeIsSvn() {
     $this->assertInstanceOf(
-      'Troupe\Source\Svn', $this->getContainer()->Dependency->getSource()
+      'Troupe\Source\Svn', $this->container['Dependency']->getSource()
     );
   }
 
   function testSourceReturnsGitSourceWhenTypeIsGit() {
     $this->options['type'] = 'git';
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertInstanceOf(
-      'Troupe\Source\Git', $this->getContainer()->Dependency->getSource()
+      'Troupe\Source\Git', $container['Dependency']->getSource()
     );
   }
 
   function testSourceReturnsFileSourceWhenTypeIsFile() {
     $this->options['type'] = 'file';
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertInstanceOf(
-      'Troupe\Source\File', $this->getContainer()->Dependency->getSource()
+      'Troupe\Source\File', $container['Dependency']->getSource()
     );
   }
 
   function testSourceReturnsSourceArchiveWhenTypeIsArchiveWithExpander() {
     $this->options['type'] = 'archive';
-    $container = $this->getContainer();
-    $container->Expander = $this->quickMock('Troupe\Expander\Expander');
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
+    $container['Expander'] = $this->quickMock('Troupe\Expander\Expander');
     $this->assertInstanceOf(
-      'Troupe\Source\Archive', $container->Dependency->getSource()
+      'Troupe\Source\Archive', $container['Dependency']->getSource()
     );
   }
 
   function testExpanderReturnsNullExpanderByDefault() {
     unset($this->options['url']);
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertInstanceOf(
-      'Troupe\Expander\NullExpander', $this->getContainer()->Expander
+      'Troupe\Expander\NullExpander', $container['Expander']
     );
   }
 
@@ -110,8 +144,13 @@ class ContainerTest extends \Troupe\Tests\TestCase {
    */
   function testExpanderReturnsCorrectExpanderType($extension, $type) {
     $this->options['url'] = "http://www.foo.com/path/to/file.$extension";
+    $container = new Container(
+      'bar', $this->project_dir, $this->settings, $this->options,
+      $this->vdm, $this->executor, $this->system_utilities,
+      $this->data_directory
+    );
     $this->assertInstanceOf(
-      "Troupe\Expander\\$type", $this->getContainer()->Expander
+      "Troupe\Expander\\$type", $container['Expander']
     );
   }
 
