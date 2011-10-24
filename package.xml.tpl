@@ -20,8 +20,8 @@
   <email>asartalo@projectweb.ph</email>
   <active>yes</active>
 </lead>
-<date>2011-04-22</date>
-<time>16:00:00</time>
+<date><?php echo $date ?></date>
+<time><?php echo $time ?></time>
 <version>
   <release>0.1.0</release>
   <api>0.1.0</api>
@@ -42,6 +42,7 @@
     <?php echo $sources ?>
   </dir>
 </contents>
+
 <dependencies>
 <required>
   <php>
@@ -50,11 +51,17 @@
   <pearinstaller>
     <min>1.9.0</min>
   </pearinstaller>
+  <package>
+    <name>Cibo</name>
+    <channel>pear.brainchildprojects.org</channel>
+  </package>
 </required>
 </dependencies>
+
 <phprelease>
   <filelist>
     <install as="troupe" name="bin/troupe" />
+    <?php echo $release ?>
   </filelist>
 </phprelease>
 

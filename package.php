@@ -3,8 +3,6 @@
 // To run:
 // $ php package.php > package.xml
 
-die('Not yet ready. Still need to organize source files and dependencies. Bummer.');
-
 $sources = '';
 
 $src_dir = __DIR__ . DIRECTORY_SEPARATOR . 'Troupe';
@@ -16,7 +14,7 @@ function recursivelyGetFiles($it, $cut = '') {
   global $source_files;
   $cutpart = strlen($cut);
   foreach ($it as $item) {
-  
+
     if ($item->isDot() || $it->getPath() == $item->getPathName()) {
       continue;
     }
@@ -35,5 +33,14 @@ recursivelyGetFiles($iterator, __DIR__ . DIRECTORY_SEPARATOR);
 foreach ($source_files as $path => $file) {
   $sources .= sprintf('<file role="php" baseinstalldir="/" name="%s" />' . "\n", $path);
 }
+
+foreach ($source_files as $path => $file) {
+  $release .= sprintf('<install as="%s" baseinstalldir="/" name="%s" />' . "\n", substr($path, 4), $path);
+}
+
+$now = time();
+
+$date = date('Y-m-d', $now);
+$time = date('h:i:s');
 
 include 'package.xml.tpl';
