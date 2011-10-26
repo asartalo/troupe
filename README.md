@@ -19,50 +19,58 @@ Hypothetical Example
 
 Dependency information is stored in a mytroupe file (here we use mytroupe.php)
 
-    // mytroupe.php
-    return array(
-      'symfony' => array(
-        'url'     => 'git://github.com/symfony/symfony.git',
-        'alias'   => 'symfony2', // This will be the directory name the source will be renamed to. Defaults to label/name
-        'move_to' => 'lib/src', // Defaults to 'vendor_dir' in settings
-      ),
+```php
+// mytroupe.php
+return array(
+  'symfony' => array(
+    'url'     => 'git://github.com/symfony/symfony.git',
+    'alias'   => 'symfony2', // This will be the directory name the source will be renamed to. Defaults to label/name
+    'move_to' => 'lib/src', // Defaults to 'vendor_dir' in settings
+  ),
 
-      'doctrine' => 'git://github.com/doctrine/doctrine2.git',
+  'doctrine' => 'git://github.com/doctrine/doctrine2.git',
 
-      // Pear import is not yet implemented
-      'phpunit' => array(
-        'type' => 'pear',
-        'channel' => 'pear.phpunit.de',
-        'pear_name' => 'phpunit/PHPUnit'
-      ),
-      // Or 'phpunit' => 'pear://pear.phpunit.de/PHPUnit'
+  // Pear import is not yet implemented
+  'phpunit' => array(
+    'type' => 'pear',
+    'channel' => 'pear.phpunit.de',
+    'pear_name' => 'phpunit/PHPUnit'
+  ),
+  // Or 'phpunit' => 'pear://pear.phpunit.de/PHPUnit'
 
-      'minify' => 'http://code.google.com/p/minify/downloads/detail?name=minify_2.1.3.zip',
+  'minify' => 'http://code.google.com/p/minify/downloads/detail?name=minify_2.1.3.zip',
 
-      // This checks the platform or environment where the application runs
-      '_platform' => array(
-        'php_version' => '5.3.x'
-      ),
+  // This checks the platform or environment where the application runs
+  '_platform' => array(
+    'php_version' => '5.3.x'
+  ),
 
-      // This is for the project settings
-      '_settings' => array(
-        'vendor_dir' => 'lib/src', // Default is 'vendor'
-      ),
-    );
+  // This is for the project settings
+  '_this' => array(
+    'vendor_dir' => 'lib/src', // Default is 'vendor'
+  ),
+);
+```
 
 Then one can run this in terminal:
 
-    troupe assemble
+```bash
+$ troupe assemble
+```
 
 And voila! Dependencies solved.
 
 To update your sources, execute:
 
-    troupe update
+```bash
+$ troupe update
+```
 
 To list all dependencies:
 
-    troupe list
+```bash
+$ troupe list
+```
 
 
 Requirements

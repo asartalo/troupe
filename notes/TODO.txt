@@ -1,2 +1,4 @@
 NEXT:
-- Create a test case for setting _settings
+- Create a test case for setting _this
+- Move Pimple inside Troupe Source
+- Proper encapsulation ... stop revealing Pimple's guts to the whole world.

@@ -8,7 +8,8 @@ $classLoader->register();
 $classLoader = new SplClassLoader('Pimple', $path . '/Pimple/lib');
 $classLoader->register();
 require_once 'Cibo/Cibo.php';
+require_once 'Silly/Silly.php';
 $container = new \Troupe\Container(getcwd(), $argv);
-$container->EnvironmentHelper->run();
+$container['EnvironmentHelper']->run();
 ?>
 

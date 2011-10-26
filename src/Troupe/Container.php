@@ -166,18 +166,17 @@ class Container extends \Pimple {
     });
 
     $this['CliController'] = function(\Pimple $c) {
-      return new Cli\Controller(
-        $c['CliInterpreter'], $c['CliExecutor'], $c['project_root_dir']
-      );
+      return \Silly\Silly::getController($c['TroupeTaskList'], $c['project_root_dir']);
     };
 
+    /*
     $this['CliInterpreter'] = function(\Pimple $c) {
       return new Cli\Interpreter;
     };
 
     $this['CliExecutor'] = function(\Pimple $c) {
       return new Cli\Executor($c['Utilities']);
-    };
+    };*/
 
     $this['FileWriter'] = function(\Pimple $c) {
       return new FileWriter;

@@ -6,4 +6,5 @@ $classLoader = new SplClassLoader('Troupe', $src_path);
 $classLoader->register();
 $classLoader = new SplClassLoader('Pimple', $src_path . '/Pimple/lib');
 $classLoader->register();
+require_once 'Silly/Silly.php';
 require_once 'Cibo/Cibo.php';
