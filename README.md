@@ -1,6 +1,10 @@
 Troupe
 ======
 
+Unmaintained. Use [Composer](https://getcomposer.org/) instead.
+---------------------------------------------------------------
+Troupe was written at a time when there was no easy dependency management and vendoring available for PHP. The PHP community has since moved along and now we can happily discontinue this project.
+
 **Troupe** is a tool for declaring and managing source code dependencies in PHP.
 
 With Troupe you can:
